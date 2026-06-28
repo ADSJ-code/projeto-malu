@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Variáveis Oficiais da Identidade Zen da Malu */
+  --bg-offwhite: #fbfbfa;    /* Fundo aconchegante estilo consultório */
+  --sage-dark: #3a4d40;      /* Verde Sálvia de autoridade (botões/títulos) */
+  --sage-light: #e8ebe9;     /* Verde Sálvia Suave para blocos/divisores */
+  --sage-border: #d2dad6;    /* Bordas suaves */
+  --lavender: #8e7cc3;       /* Lilás Transmutador (destaques espirituais) */
+  --text-main: #2c3531;      /* Grafite escuro confortável para leitura */
+  --text-muted: #5a6561;     /* Texto secundário/subtítulos */
+}
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-offwhite);
+  }
+  body {
+    background-color: var(--bg-offwhite);
+    color: var(--text-main);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Utilitários Especiais de Estilo Fluido */
+@layer utilities {
+  .zen-blob {
+    position: absolute;
+    background: radial-gradient(circle, rgba(142, 124, 195, 0.12) 0%, rgba(251, 251, 250, 0) 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    z-index: 0;
+    pointer-events: none;
+  }
+}

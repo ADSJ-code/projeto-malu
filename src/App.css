@@ -1,0 +1,22 @@
+/* Estilos Globais de Transição Dinâmica */
+a, button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Customização sutil da barra de rolagem para combinar com o visual Zen */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-offwhite);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sage-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
