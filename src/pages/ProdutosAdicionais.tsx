@@ -1,128 +1,137 @@
-import { useState } from 'react';
-import { ArrowLeft, MessageCircle, Sparkles, Package } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, MessageCircle, Sparkles, Leaf, Flower2, Loader2, PackageOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const mockProdutosDiversos = [
-  { 
-    id: 1, 
-    nome: 'E-book: Guia Prático de Auto-reflexão', 
-    preco: 'R$ 29,90', 
-    descricao: 'Um material digital completo com 30 exercícios práticos e guiados para você desenvolver o autoconhecimento, inteligência emocional e criar uma rotina mais alinhada com os seus propósitos de vida. Formato PDF de alta qualidade, legível em celulares e tablets.',
-    imagem: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1200' 
-  },
-  { 
-    id: 2, 
-    nome: 'Sessão de Alinhamento de Metas (Individual)', 
-    preco: 'R$ 150,00', 
-    descricao: 'Um encontro online e exclusivo de 1 hora. Focado totalmente no planejamento estratégico dos seus objetivos pessoais e profissionais. Vamos estruturar juntos uma rotina saudável e metas alcançáveis sem sacrificar a sua saúde mental.',
-    imagem: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&q=80&w=1200' 
-  },
-  { 
-    id: 3, 
-    nome: 'Planner Semanal Minimalista (Digital)', 
-    preco: 'R$ 19,90', 
-    descricao: 'Ferramenta de organização elegante e sem distrações visuais. Arquivo em alta resolução pronto para impressão caseira ou para ser importado em aplicativos de notas (GoodNotes, Notability, Samsung Notes). Organize seus dias com leveza.',
-    imagem: 'https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=1200' 
-  }
-];
+interface Produto {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  category: string;
+  status: string;
+}
 
 export default function ProdutosAdicionais() {
   const numeroWhatsApp = "5511978044488";
-  const [produtoSelecionado, setProdutoSelecionado] = useState<typeof mockProdutosDiversos[0] | null>(null);
+  
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const lidarComInteresse = (nomeProduto: string) => {
-    const mensagem = `Olá, Malu! Vi a sua página de produtos e tenho interesse em adquirir: *"${nomeProduto}"*. Como faço para prosseguir?`;
+  useEffect(() => {
+    fetch('http://localhost:8080/api/products')
+      .then(response => response.json())
+      .then(data => {
+        // Filtrar apenas os itens com a categoria "diversos"
+        const diversos = (data || []).filter((item: Produto) => item.category === 'diversos');
+        setProdutos(diversos);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error("Erro ao buscar produtos:", error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const lidarComInteresse = (nomeProduto: string, precoProduto: number) => {
+    const mensagem = `Olá, Malu! Vi a sua página do Mover a Vida e tenho interesse no produto: *"${nomeProduto}"* (R$ ${precoProduto.toFixed(2)}). Como faço para prosseguir?`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
-  // TELA DE DETALHES
-  if (produtoSelecionado) {
-    return (
-      <div className="min-h-screen bg-[#fbfbfa] pb-24">
-        <div className="w-full h-[300px] md:h-[450px] relative bg-[#e8ebe9]">
-          <img src={produtoSelecionado.imagem} alt={produtoSelecionado.nome} className="w-full h-full object-cover brightness-90" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-          
-          <div className="absolute top-8 left-6 md:left-12 z-10">
-            <button onClick={() => { setProdutoSelecionado(null); window.scrollTo(0,0); }} className="inline-flex items-center gap-2 text-sm font-medium bg-white/90 backdrop-blur-sm text-[#3a4d40] px-4 py-2 rounded-xl hover:bg-white transition-all shadow">
-              <ArrowLeft size={16} /> Voltar para Materiais
-            </button>
-          </div>
-        </div>
-
-        <div className="max-w-3xl mx-auto px-6 mt-12 space-y-8">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#8e7cc3] bg-[#8e7cc3]/10 px-3 py-1.5 rounded-full uppercase tracking-wider mb-4 border border-[#8e7cc3]/20">
-              <Sparkles size={14} /> Material Exclusivo
-            </div>
-            <h1 className="text-3xl md:text-5xl font-black text-[#2c3531] tracking-tight">{produtoSelecionado.nome}</h1>
-            <p className="text-3xl font-medium text-[#3a4d40] mt-4">{produtoSelecionado.preco}</p>
-          </div>
-
-          <div className="text-[#5a6561] text-base md:text-lg leading-relaxed font-light py-6 border-y border-[#d2dad6]/50">
-            <p>{produtoSelecionado.descricao}</p>
-          </div>
-
-          <div className="bg-[#e8ebe9] border border-[#d2dad6] rounded-2xl p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left space-y-1">
-              <h3 className="font-bold text-[#2c3531] text-lg">Pronto para dar o próximo passo?</h3>
-              <p className="text-sm text-[#5a6561] font-light">Chame no WhatsApp para enviarmos as instruções e liberar o seu acesso.</p>
-            </div>
-            <button onClick={() => lidarComInteresse(produtoSelecionado.nome)} className="flex items-center gap-2 px-8 py-4 bg-[#3a4d40] text-white rounded-xl font-medium hover:bg-[#2d3c32] transition-colors shadow flex-shrink-0">
-              <MessageCircle size={20} /> Adquirir via WhatsApp
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // LISTAGEM DE PRODUTOS
   return (
-    <div className="min-h-screen bg-[#fbfbfa] relative pb-24">
-      <div className="w-full bg-[#e8ebe9] pt-12 pb-20 relative">
-        <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-[#5a6561] hover:text-[#3a4d40] transition-colors mb-6">
-            <ArrowLeft size={16} /> Voltar ao Início
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm text-[#3a4d40]">
-              <Package size={24} />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black text-[#2c3531] tracking-tight">Produtos & Materiais</h1>
-          </div>
-          <p className="text-[#5a6561] mt-3 max-w-2xl font-light text-lg">
-            Confira ferramentas, infoprodutos e soluções exclusivas desenvolvidas para apoiar a sua jornada de desenvolvimento pessoal.
-          </p>
-        </div>
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[40px] md:h-[60px]">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#fbfbfa"></path>
-          </svg>
-        </div>
+    <div className="min-h-screen bg-malu-bg font-sans">
+      <nav className="p-6 md:px-12 flex justify-between items-center bg-malu-bg/80 backdrop-blur-md sticky top-0 z-50 border-b border-malu-green-light/50">
+        <div className="text-xl font-serif text-malu-green-dark tracking-wide">Mover a <span className="italic font-light text-malu-green">Vida</span></div>
+        <Link to="/" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-malu-text-muted hover:text-malu-green-dark transition-colors">
+          <ArrowLeft size={16} /> Voltar
+        </Link>
+      </nav>
+
+      <div className="w-full bg-malu-bg pt-16 pb-20 text-center border-b border-malu-green-light/40">
+        <h1 className="text-5xl md:text-6xl font-serif text-malu-green-dark tracking-tight italic mb-6">
+          Bem-Estar & Nutrição
+        </h1>
+        <p className="text-malu-text-muted max-w-2xl mx-auto font-light text-lg px-6">
+          Produtos e suplementos cuidadosamente selecionados para apoiar a sua vitalidade, nutrição e o equilíbrio do corpo físico.
+        </p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 mt-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockProdutosDiversos.map((produto) => (
-            <article key={produto.id} onClick={() => { setProdutoSelecionado(produto); window.scrollTo(0,0); }} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-[#d2dad6] group cursor-pointer flex flex-col">
-              <div className="h-48 overflow-hidden bg-[#e8ebe9] relative">
-                <img src={produto.imagem} alt={produto.nome} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full border border-[#d2dad6] flex items-center gap-1 text-xs font-bold text-[#8e7cc3] uppercase tracking-wider shadow-sm">
-                  <Sparkles size={12} /> Exclusivo
-                </div>
-              </div>
-              
-              <div className="p-6 flex flex-col flex-grow space-y-4">
-                <h3 className="text-lg font-bold text-[#2c3531] group-hover:text-[#8e7cc3] transition-colors">{produto.nome}</h3>
-                <p className="text-[#5a6561] text-sm leading-relaxed line-clamp-3">{produto.descricao}</p>
-                <div className="pt-2 mt-auto">
-                  <p className="text-2xl font-bold text-[#3a4d40]">{produto.preco}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+      <div className="w-full flex flex-col pt-16">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-32 text-malu-text-muted">
+            <Loader2 className="animate-spin mb-4 text-malu-green" size={32} />
+            <p className="font-medium uppercase tracking-wider text-sm">A carregar materiais...</p>
+          </div>
+        ) : produtos.length === 0 ? (
+          <div className="text-center py-32 px-6 max-w-2xl mx-auto">
+            <PackageOpen className="mx-auto text-malu-green-light mb-6" size={48} />
+            <h3 className="text-3xl font-serif text-malu-green-dark mb-4">Nenhum produto disponível</h3>
+            <p className="text-malu-text-muted font-light text-lg">De momento não temos produtos de nutrição listados aqui. Volte em breve!</p>
+          </div>
+        ) : (
+          <div className="w-full flex flex-col gap-32 md:gap-48 pb-32">
+            {produtos.map((produto, index) => {
+              const isPar = index % 2 === 0;
+
+              return (
+                <section key={produto.id} className="w-full relative min-h-[420px] flex items-center overflow-hidden">
+                  
+                  {/* 🟢 BLOCO DE SOTAQUE ASSEMETRICO */}
+                  <div 
+                    className={`absolute top-1/2 -translate-y-1/2 h-[80%] w-[35%] bg-malu-green/95 z-0 transition-all hidden md:block
+                      ${isPar ? 'left-0 rounded-r-sm' : 'right-0 rounded-l-sm'}`}
+                  />
+
+                  {/* Marcas d'água */}
+                  <div className={`absolute opacity-[0.03] pointer-events-none z-0 hidden lg:block ${isPar ? '-right-32 top-1/2 -translate-y-1/2' : '-left-32 top-1/2 -translate-y-1/2'} text-malu-green-dark`}>
+                    {isPar ? <Flower2 size={400} strokeWidth={0.5} /> : <Leaf size={400} strokeWidth={0.5} />}
+                  </div>
+
+                  <div className={`max-w-6xl mx-auto px-6 w-full flex flex-col ${isPar ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-12 md:gap-20 relative z-10`}>
+                    
+                    {/* Imagem Limpa com Efeito Overlap */}
+                    <div className="w-full md:w-1/2 relative flex justify-center">
+                      <div className={`w-full aspect-[4/3] max-w-[480px] overflow-hidden relative shadow-xl transition-transform duration-500 hover:-translate-y-1 group bg-white rounded-sm ${isPar ? 'md:translate-x-10' : 'md:-translate-x-10'}`}>
+                        <img 
+                          src={produto.image_url || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'} 
+                          alt={produto.name} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Conteúdo Textual */}
+                    <div className={`w-full md:w-1/2 flex flex-col justify-center text-left ${isPar ? 'md:pl-6' : 'md:pr-6'}`}>
+                      
+                      <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-5 text-malu-text-muted">
+                        <span className="text-malu-lilac flex items-center gap-1"><Sparkles size={12}/> Exclusivo</span>
+                        <span className="text-malu-green-light/50">|</span>
+                        <span className="text-malu-green font-sans text-sm">R$ {produto.price.toFixed(2)}</span>
+                      </div>
+                      
+                      <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-malu-green-dark mb-6 leading-tight hover:text-malu-green transition-colors">
+                        {produto.name}
+                      </h2>
+                      
+                      <p className="text-malu-text-muted text-base leading-relaxed mb-8 font-light">
+                        {produto.description}
+                      </p>
+
+                      <div>
+                        <button 
+                          onClick={() => lidarComInteresse(produto.name, produto.price)}
+                          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-malu-green border-b-2 border-malu-green pb-1 hover:text-malu-green-dark hover:border-malu-green-dark transition-colors"
+                        >
+                          <MessageCircle size={16} /> Adquirir via WhatsApp
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

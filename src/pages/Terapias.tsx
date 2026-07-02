@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, BookOpen, MessageCircle, Calendar, User, Search, Tag, Loader2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, MessageCircle, Calendar, User, Search, Loader2, Leaf, Flower2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Interface que espelha o nosso modelo do Golang
 interface Artigo {
   id: string;
   title: string;
@@ -10,20 +9,20 @@ interface Artigo {
   summary: string;
   image_url: string;
   created_at: string;
-  content: string; // Adicionado para exibir o texto completo
+  content: string;
 }
 
 export default function Terapias() {
   const numeroWhatsApp = "5511978044488";
   
-  // Estados para gerenciar os dados da API
   const [artigos, setArtigos] = useState<Artigo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
-  // Estado que gerencia qual artigo está aberto.
   const [artigoSelecionado, setArtigoSelecionado] = useState<Artigo | null>(null);
+  
+  // 🔍 Estados para Filtro e Pesquisa (Pedidos na Reunião)
+  const [pesquisa, setPesquisa] = useState('');
+  const [ordenacao, setOrdenacao] = useState<'recentes' | 'antigos'>('recentes');
 
-  // Busca os artigos da API quando o componente carrega
   useEffect(() => {
     fetch('http://localhost:8080/api/posts')
       .then(response => response.json())
@@ -38,19 +37,31 @@ export default function Terapias() {
   }, []);
 
   const abrirConversaWhatsApp = (contexto: string) => {
-    let mensagem = "Olá, Malu! Estava lendo os artigos do seu blog sobre terapias e gostaria de conversar a respeito.";
+    let mensagem = "Olá, Malu! Estava lendo os artigos do seu blog Mover a Vida e gostaria de conversar a respeito.";
     if (contexto) {
-      mensagem = `Olá, Malu! Acabei de ler o seu artigo *"${contexto}"* e achei a reflexão muito interessante. Gostaria de compartilhar algumas ideias sobre o assunto!`;
+      mensagem = `Olá, Malu! Acabei de ler o seu artigo *"${contexto}"* no Mover a Vida e achei a reflexão muito interessante!`;
     }
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
-  // SE UM ARTIGO ESTIVER SELECIONADO: Renderiza a tela de leitura cheia
+  // 📝 PROCESSAMENTO: Filtragem por texto + Ordenação por data
+  const artigosProcessados = artigos
+    .filter(artigo => 
+      artigo.title.toLowerCase().includes(pesquisa.toLowerCase()) ||
+      artigo.summary.toLowerCase().includes(pesquisa.toLowerCase()) ||
+      artigo.category.toLowerCase().includes(pesquisa.toLowerCase())
+    )
+    .sort((a, b) => {
+      const dataA = new Date(a.created_at).getTime();
+      const dataB = new Date(b.created_at).getTime();
+      return ordenacao === 'recentes' ? dataB - dataA : dataA - dataB;
+    });
+
+  // TELA DE LEITURA COMPLETA
   if (artigoSelecionado) {
     return (
-      <div className="min-h-screen bg-[#fbfbfa] pb-24 font-sans">
-        {/* Banner Superior com Imagem e Botão Voltar */}
-        <div className="w-full h-[300px] md:h-[450px] relative bg-[#e8ebe9]">
+      <div className="min-h-screen bg-malu-bg pb-24 font-sans">
+        <div className="w-full h-[300px] md:h-[450px] relative bg-malu-green-light">
           <img 
             src={artigoSelecionado.image_url || 'https://images.unsplash.com/photo-1506126613408-eca07ce68773'} 
             alt={artigoSelecionado.title} 
@@ -61,184 +72,198 @@ export default function Terapias() {
           <div className="absolute top-8 left-6 md:left-12 z-10">
             <button 
               onClick={() => { setArtigoSelecionado(null); window.scrollTo(0,0); }}
-              className="inline-flex items-center gap-2 text-sm font-medium bg-white/90 backdrop-blur-sm text-[#3a4d40] px-4 py-2 rounded-xl hover:bg-white transition-all shadow"
+              className="inline-flex items-center gap-2 text-sm font-medium bg-malu-card/90 backdrop-blur-sm text-malu-green-dark px-4 py-2 rounded-sm hover:bg-malu-card transition-all shadow"
             >
-              <ArrowLeft size={16} /> Voltar para o Blog
+              <ArrowLeft size={16} /> Voltar para Reflexões
             </button>
           </div>
 
           <div className="absolute bottom-8 left-6 right-6 max-w-4xl mx-auto text-white space-y-3">
-            <span className="bg-[#8e7cc3] text-white text-xs px-3 py-1 rounded-md font-bold uppercase tracking-wider">
+            <span className="bg-malu-lilac text-white text-xs px-3 py-1 rounded-sm font-bold uppercase tracking-wider">
               {artigoSelecionado.category || 'Geral'}
             </span>
-            <h1 className="text-2xl md:text-4xl font-black tracking-tight leading-tight drop-shadow">
+            <h1 className="text-3xl md:text-5xl font-serif italic tracking-tight leading-tight drop-shadow-md">
               {artigoSelecionado.title}
             </h1>
           </div>
         </div>
 
-        {/* Corpo do Texto do Artigo */}
         <div className="max-w-3xl mx-auto px-6 mt-12 space-y-8">
-          
-          {/* Metadados de Leitura */}
-          <div className="flex items-center gap-6 text-sm font-medium text-[#5a6561] border-b border-[#d2dad6]/50 pb-4">
+          <div className="flex items-center gap-6 text-sm font-medium text-malu-text-muted border-b border-malu-green-light pb-4 uppercase tracking-wider">
             <span className="flex items-center gap-1.5">
               <Calendar size={16} /> {new Date(artigoSelecionado.created_at).toLocaleDateString('pt-BR')}
             </span>
             <span className="flex items-center gap-1.5"><User size={16} /> Por Malu Celeghim</span>
           </div>
 
-          {/* Renderização do texto (separando por quebras de linha reais do banco) */}
-          <div className="text-[#2c3531] text-base md:text-lg leading-relaxed font-light space-y-6 text-justify whitespace-pre-line">
+          <div className="text-malu-text-main text-base md:text-lg leading-relaxed font-light space-y-6 text-justify whitespace-pre-line">
             {artigoSelecionado.content}
           </div>
 
-          {/* CTA Customizado */}
-          <div className="bg-[#e8ebe9] border border-[#d2dad6] rounded-2xl p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 mt-16">
+          <div className="bg-malu-card border border-malu-green-light rounded-sm p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 mt-16">
             <div className="text-center md:text-left space-y-1">
-              <h3 className="font-bold text-[#2c3531] text-lg">Sentiu conexão com essa leitura?</h3>
-              <p className="text-sm text-[#5a6561] font-light">Vamos trocar ideias. Me chame no WhatsApp para compartilharmos reflexões sobre esse tema.</p>
+              <h3 className="font-serif text-malu-green-dark text-2xl">Sentiu conexão com essa leitura?</h3>
+              <p className="text-sm text-malu-text-muted font-light">Vamos trocar ideias. Me chame no WhatsApp para compartilharmos reflexões.</p>
             </div>
             <button 
               onClick={() => abrirConversaWhatsApp(artigoSelecionado.title)}
-              className="flex items-center gap-2 px-6 py-3.5 bg-[#3a4d40] text-white rounded-xl font-medium hover:bg-[#2d3c32] transition-colors shadow flex-shrink-0"
+              className="flex items-center gap-2 px-6 py-3.5 bg-malu-green text-white rounded-sm font-medium hover:bg-malu-green-dark transition-colors shadow flex-shrink-0"
             >
-              <MessageCircle size={18} /> Conversar sobre o artigo
+              <MessageCircle size={18} /> Conversar no WhatsApp
             </button>
           </div>
-
         </div>
       </div>
     );
   }
 
-  // CASO CONTRÁRIO: Renderiza a listagem padrão do blog
+  // LISTAGEM DO BLOG MOVER A VIDA
   return (
-    <div className="min-h-screen bg-[#fbfbfa] relative pb-24 font-sans">
+    <div className="min-h-screen bg-malu-bg relative font-sans">
       
-      {/* Cabeçalho Orgânico Zen com Onda Corrigida */}
-      <div className="w-full bg-[#e8ebe9] pt-12 pb-20 relative">
-        <div className="max-w-5xl mx-auto px-6 relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-[#5a6561] hover:text-[#3a4d40] transition-colors mb-6">
-            <ArrowLeft size={16} /> Voltar ao Início
-          </Link>
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm text-[#3a4d40]">
-              <BookOpen size={24} />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black text-[#2c3531] tracking-tight">Reflexões & Terapias</h1>
-          </div>
-          <p className="text-[#5a6561] mt-3 max-w-2xl font-light text-lg">
-            Bem-vinda ao meu espaço de artigos. Aqui compartilho visões, estudos e reflexões sobre práticas terapêuticas e bem-estar.
+      {/* Barra de Navegação Padronizada */}
+      <nav className="p-6 md:px-12 flex justify-between items-center bg-malu-bg/80 backdrop-blur-md sticky top-0 z-50 border-b border-malu-green-light/50">
+        <div className="text-xl font-serif text-malu-green-dark tracking-wide">Mover a <span className="italic font-light text-malu-green">Vida</span></div>
+        <Link to="/" className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-malu-text-muted hover:text-malu-green-dark transition-colors">
+          <ArrowLeft size={16} /> Voltar
+        </Link>
+      </nav>
+
+      <div className="w-full bg-malu-bg pt-16 pb-24 relative border-b border-malu-green-light/40">
+        <div className="max-w-5xl mx-auto px-6 relative z-10 text-center">
+          <h1 className="text-5xl md:text-6xl font-serif text-malu-green-dark tracking-tight italic mb-6">
+            Reflexões Mover a Vida
+          </h1>
+          <p className="text-malu-text-muted max-w-2xl mx-auto font-light text-lg">
+            Um espaço de quietude. Artigos sobre práticas terapêuticas, autocuidado, ecologia e um estilo de vida consciente escritos pela Malu.
           </p>
         </div>
 
-        {/* Onda SVG Separadora */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[40px] md:h-[60px]">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#fbfbfa"></path>
-          </svg>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 mt-8 space-y-12">
-        
-        {/* Barra de Pesquisa */}
-        <div className="relative max-w-2xl mx-auto -mt-16 z-20">
-          <div className="bg-white rounded-2xl shadow-md border border-[#d2dad6] flex items-center p-2">
-            <div className="pl-4 text-[#5a6561]">
-              <Search size={20} />
+        {/* Barra de Pesquisa Estilo Editorial (Idêntica ao Modelo) */}
+        <div className="absolute -bottom-8 left-0 w-full flex justify-center px-6 z-20">
+          <div className="bg-white rounded-sm shadow-lg border border-malu-green-light flex items-center p-1.5 w-full max-w-3xl">
+            <div className="pl-4 text-malu-text-muted flex-shrink-0">
+              <Search size={18} />
             </div>
             <input 
               type="text" 
-              placeholder="Pesquisar artigos, temas ou reflexões..." 
-              className="w-full px-4 py-3 bg-transparent outline-none text-[#2c3531] placeholder:text-[#5a6561]/60 font-medium"
+              value={pesquisa}
+              onChange={(e) => setPesquisa(e.target.value)}
+              placeholder="Procurar uma reflexão..." 
+              className="w-full px-4 py-3 bg-transparent outline-none text-malu-text-main placeholder:text-malu-text-muted/60 font-light text-sm"
             />
-            <button className="bg-[#3a4d40] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2d3c32] transition-colors">
+            {/* Filtro embutido discretamente */}
+            <div className="hidden md:flex items-center border-l border-malu-green-light/50 pl-4 pr-2">
+              <select 
+                value={ordenacao}
+                onChange={(e) => setOrdenacao(e.target.value as 'recentes' | 'antigos')}
+                className="bg-transparent outline-none cursor-pointer text-malu-green-dark font-bold text-[10px] uppercase tracking-widest"
+              >
+                <option value="recentes">Mais Recentes</option>
+                <option value="antigos">Mais Antigos</option>
+              </select>
+            </div>
+            {/* Botão Buscar interno igual ao modelo */}
+            <button className="bg-malu-green-dark text-white px-8 py-3.5 rounded-sm font-bold uppercase tracking-widest text-[10px] hover:bg-malu-green transition-colors ml-2 flex-shrink-0">
               Buscar
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Grid de Artigos Dinâmico da API */}
+      {/* Renderização Editorial */}
+      <div className="w-full flex flex-col pt-24">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-[#5a6561]">
-            <Loader2 className="animate-spin mb-4" size={32} />
-            <p className="font-medium">A carregar os artigos da nuvem...</p>
+          <div className="flex flex-col items-center justify-center py-32 text-malu-text-muted">
+            <Loader2 className="animate-spin mb-4 text-malu-green" size={32} />
+            <p className="font-medium tracking-widest uppercase text-sm">A sintonizar reflexões...</p>
           </div>
-        ) : artigos.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-[#d2dad6] shadow-sm max-w-2xl mx-auto">
-            <BookOpen className="mx-auto text-[#d2dad6] mb-4" size={48} />
-            <h3 className="text-xl font-bold text-[#2c3531] mb-2">Nenhum artigo publicado</h3>
-            <p className="text-[#5a6561]">Os textos da Malu aparecerão aqui em breve.</p>
+        ) : artigosProcessados.length === 0 ? (
+          <div className="text-center py-32 px-6 max-w-2xl mx-auto">
+            <BookOpen className="mx-auto text-malu-green-light mb-6" size={48} />
+            <h3 className="text-2xl font-serif text-malu-green-dark mb-4">Nenhuma reflexão encontrada</h3>
+            <p className="text-malu-text-muted font-light">Tente mudar os termos da sua pesquisa.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pt-4">
-            {artigos.map((artigo) => (
-              <article key={artigo.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#d2dad6] flex flex-col group hover:shadow-lg transition-all duration-300">
-                
-                <div 
-                  onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
-                  className="w-full h-52 overflow-hidden bg-[#e8ebe9] relative cursor-pointer"
-                >
-                  <img 
-                    src={artigo.image_url || 'https://images.unsplash.com/photo-1506126613408-eca07ce68773'} 
-                    alt={artigo.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-[#d2dad6] flex items-center gap-1.5 text-xs font-bold text-[#8e7cc3] uppercase tracking-wider shadow-sm">
-                    <Tag size={12} />
-                    {artigo.category || 'Geral'}
-                  </div>
-                </div>
-                
-                <div className="p-6 flex flex-col flex-grow">
-                  <div className="flex items-center gap-4 text-xs font-medium text-[#5a6561] mb-3">
-                    <span className="flex items-center gap-1"><Calendar size={14} />{new Date(artigo.created_at).toLocaleDateString('pt-BR')}</span>
-                    <span className="flex items-center gap-1"><User size={14} />Malu Celeghim</span>
-                  </div>
-                  
-                  <h2 
-                    onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
-                    className="text-xl font-bold text-[#2c3531] mb-3 group-hover:text-[#8e7cc3] transition-colors line-clamp-2 cursor-pointer"
-                  >
-                    {artigo.title}
-                  </h2>
-                  
-                  <p className="text-[#5a6561] text-sm leading-relaxed mb-6 line-clamp-3">
-                    {artigo.summary}
-                  </p>
+          <div className="w-full flex flex-col gap-32 md:gap-48 pb-32">
+            {artigosProcessados.map((artigo, index) => {
+              const isPar = index % 2 === 0;
 
-                  <div className="mt-auto pt-4 border-t border-[#d2dad6]/50">
-                    <button 
-                      onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
-                      className="text-sm font-bold text-[#3a4d40] group-hover:text-[#8e7cc3] group-hover:translate-x-1 transition-all flex items-center gap-1"
-                    >
-                      Ler artigo completo →
-                    </button>
+              return (
+                <section key={artigo.id} className="w-full relative min-h-[420px] flex items-center overflow-hidden">
+                  
+                  {/* Bloco Verde Lateral */}
+                  <div 
+                    className={`absolute top-1/2 -translate-y-1/2 h-[80%] w-[35%] bg-malu-green/95 z-0 transition-all hidden md:block
+                      ${isPar ? 'left-0 rounded-r-sm' : 'right-0 rounded-l-sm'}`}
+                  />
+
+                  {/* Marcas d'água nas bordas */}
+                  <div className={`absolute opacity-[0.03] pointer-events-none z-0 hidden lg:block ${isPar ? '-right-32 top-1/2 -translate-y-1/2' : '-left-32 top-1/2 -translate-y-1/2'} text-malu-green-dark`}>
+                    {isPar ? <Flower2 size={400} strokeWidth={0.5} /> : <Leaf size={400} strokeWidth={0.5} />}
                   </div>
-                </div>
-              </article>
-            ))}
+
+                  <div className={`max-w-6xl mx-auto px-6 w-full flex flex-col ${isPar ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-12 md:gap-20 relative z-10`}>
+                    
+                    {/* Imagem Pura com Efeito Overlap */}
+                    <div className="w-full md:w-1/2 relative flex justify-center">
+                      <div 
+                        onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
+                        className={`w-full aspect-[4/3] max-w-[480px] overflow-hidden relative cursor-pointer shadow-xl transition-transform duration-500 hover:-translate-y-1 group bg-white rounded-sm
+                          ${isPar ? 'md:translate-x-10' : 'md:-translate-x-10'}`} 
+                      >
+                        <img 
+                          src={artigo.image_url || 'https://images.unsplash.com/photo-1506126613408-eca07ce68773'} 
+                          alt={artigo.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Texto Editorial Limpo */}
+                    <div className={`w-full md:w-1/2 flex flex-col justify-center text-left ${isPar ? 'md:pl-6' : 'md:pr-6'}`}>
+                      
+                      {/* Categoria Discreta + Data */}
+                      <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-5 text-malu-text-muted">
+                        <span className="text-malu-lilac">{artigo.category || 'Geral'}</span>
+                        <span className="text-malu-green-light/50">|</span>
+                        <span className="flex items-center gap-1.5"><Calendar size={14} className="mb-0.5"/>{new Date(artigo.created_at).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                      
+                      <h2 
+                        onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
+                        className="text-3xl md:text-4xl lg:text-5xl font-serif text-malu-green-dark mb-6 leading-tight cursor-pointer hover:text-malu-green transition-colors"
+                      >
+                        {artigo.title}
+                      </h2>
+                      
+                      <p className="text-malu-text-muted text-base leading-relaxed mb-8 line-clamp-4 font-light">
+                        {artigo.summary}
+                      </p>
+
+                      <div>
+                        <button 
+                          onClick={() => { setArtigoSelecionado(artigo); window.scrollTo(0,0); }}
+                          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-malu-green border-b-2 border-malu-green pb-1 hover:text-malu-green-dark hover:border-malu-green-dark transition-colors"
+                        >
+                          Ler reflexão completa →
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                </section>
+              );
+            })}
           </div>
         )}
-
-        {/* Call to Action Final */}
-        <div className="bg-white border border-[#d2dad6] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 max-w-4xl mx-auto">
-          <div className="text-center sm:text-left">
-            <h3 className="font-bold text-[#2c3531]">Quer saber mais sobre algum assunto?</h3>
-            <p className="text-sm text-[#5a6561] mt-1">Entre em contato comigo para tirarmos dúvidas ou compartilharmos experiências.</p>
-          </div>
-          <button 
-            onClick={() => abrirConversaWhatsApp("")}
-            className="flex items-center gap-2 px-6 py-3 bg-[#3a4d40] text-white rounded-xl font-medium hover:bg-[#2d3c32] transition-colors shadow-sm hover:shadow flex-shrink-0"
-          >
-            <MessageCircle size={18} />
-            Conversar no WhatsApp
-          </button>
-        </div>
-
       </div>
+
+        <footer className="w-full text-center py-8 font-sans text-xs text-malu-text-muted/60 tracking-widest uppercase border-t border-malu-green-light/40 mt-16">
+        &copy; {new Date().getFullYear()} Mover a Vida por Malu Celeghim.
+      </footer>
+
     </div>
+    
   );
 }

@@ -60,12 +60,14 @@ func main() {
 	// Nova rota de configuração (protegida):
 	http.HandleFunc("/api/settings/update", enableCORS(middleware.JWTMiddleware(handlers.UpdateCredentialsHandler)))
 	// Rotas do Blog (Posts)
-	http.HandleFunc("/api/posts/create", enableCORS(middleware.JWTMiddleware(handlers.CreatePostHandler)))
-	http.HandleFunc("/api/posts", enableCORS(handlers.GetPostsHandler))
+    http.HandleFunc("/api/posts/create", enableCORS(middleware.JWTMiddleware(handlers.CreatePostHandler)))
+    http.HandleFunc("/api/posts", enableCORS(handlers.GetPostsHandler))
+    http.HandleFunc("/api/posts/", enableCORS(middleware.JWTMiddleware(handlers.ManagePostHandler))) // Nova rota para Edição (PUT) e Remoção (DELETE)
 
-	// Rotas da Vitrine (Produtos)
-	http.HandleFunc("/api/products/create", enableCORS(middleware.JWTMiddleware(handlers.CreateProductHandler)))
-	http.HandleFunc("/api/products", enableCORS(handlers.GetProductsHandler))
+    // Rotas da Vitrine (Produtos)
+    http.HandleFunc("/api/products/create", enableCORS(middleware.JWTMiddleware(handlers.CreateProductHandler)))
+    http.HandleFunc("/api/products", enableCORS(handlers.GetProductsHandler))
+    http.HandleFunc("/api/products/", enableCORS(middleware.JWTMiddleware(handlers.ManageProductHandler))) // Nova rota para Edição (PUT) e Remoção (DELETE)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

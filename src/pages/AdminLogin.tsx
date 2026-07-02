@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogIn, Lock, Mail, ArrowRight, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, Leaf } from 'lucide-react';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ export default function AdminLogin() {
 
       console.log("Status da resposta do Go:", response.status);
 
-      // Tratamento defensivo de leitura do payload
       let data: any = {};
       const responseText = await response.text();
       
@@ -44,7 +43,6 @@ export default function AdminLogin() {
         console.log("Login autorizado! Guardando token JWT...");
         localStorage.setItem('token', data.token);
         
-        // Pequeno delay para garantir gravação estável no localStorage antes de mudar de rota
         setTimeout(() => {
           navigate('/admin/dashboard');
         }, 100);
@@ -61,118 +59,100 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fbfbfa] p-4 font-sans relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-malu-bg p-6 font-sans relative overflow-hidden">
       
-      <div className="bg-white rounded-3xl shadow-xl flex w-full max-w-4xl overflow-hidden min-h-[500px] relative z-10 border border-[#d2dad6]">
+      {/* Decoração de Fundo Botânica */}
+      <div className="absolute opacity-[0.03] pointer-events-none -right-32 top-0 text-malu-green-dark">
+        <Leaf size={600} strokeWidth={0.5} />
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         
-        {/* Lado Esquerdo - Formulário */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center p-8 md:p-12 relative">
-          <div className="max-w-sm mx-auto w-full space-y-6">
-            
-            <div className="text-left">
-              <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-[#5a6561] hover:text-[#3a4d40] mb-6 uppercase tracking-wider transition-colors">
-                <ArrowLeft size={14} /> Voltar ao Site
-              </Link>
-              
-              <h1 className="text-3xl font-black text-[#2c3531] tracking-tight mb-2">
-                {view === 'login' ? 'Acesso Restrito' : 'Recuperar Acesso'}
-              </h1>
-              <p className="text-[#5a6561] text-sm font-light">
-                {view === 'login' 
-                  ? 'Painel administrativo do Espaço Malu Celeghim.' 
-                  : 'Instruções para redefinição de palavra-passe.'}
-              </p>
+        {/* Cabeçalho do Login */}
+        <div className="text-center mb-10">
+          <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-malu-text-muted hover:text-malu-green-dark transition-colors mb-6 uppercase tracking-widest">
+            <ArrowLeft size={16} /> Voltar ao Site
+          </Link>
+          <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight italic">
+            Mover a Vida
+          </h1>
+          <p className="text-malu-text-muted mt-2 text-sm uppercase tracking-widest">
+            {view === 'login' ? 'Acesso Restrito' : 'Recuperar Acesso'}
+          </p>
+        </div>
+
+        {/* Formulário Minimalista */}
+        <div className="bg-malu-card border border-malu-green-light rounded-sm p-8 shadow-xl">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-700 text-sm rounded-sm border border-red-100 flex items-center justify-center gap-2 font-medium">
+              <AlertCircle size={16} /> {error}
             </div>
+          )}
 
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-red-600 text-sm">
-                <AlertCircle size={16} /> {error}
+          {view === 'login' ? (
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-xs font-bold text-malu-text-muted uppercase tracking-widest mb-2">E-mail</label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-malu-green-light" size={18} />
+                    <input 
+                      type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-light transition-all"
+                      placeholder="admin@moveravida.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-malu-text-muted uppercase tracking-widest mb-2">Palavra-passe</label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-malu-green-light" size={18} />
+                    <input 
+                      type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-light transition-all"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
               </div>
-            )}
 
-            {view === 'login' ? (
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-[#5a6561] uppercase mb-1 ml-1">E-mail</label>
-                    <div className="relative group">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5a6561]" size={20} />
-                      <input 
-                        type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3.5 bg-[#fbfbfa] border border-[#d2dad6] rounded-xl focus:ring-2 focus:ring-[#3a4d40] focus:border-transparent outline-none transition-all font-medium text-[#2c3531]"
-                        placeholder="malu@exemplo.com"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-[#5a6561] uppercase mb-1 ml-1">Palavra-passe</label>
-                    <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#5a6561]" size={20} />
-                      <input 
-                        type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3.5 bg-[#fbfbfa] border border-[#d2dad6] rounded-xl focus:ring-2 focus:ring-[#3a4d40] outline-none transition-all font-medium text-[#2c3531]"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end pt-1">
-                  <button 
-                    type="button" 
-                    onClick={() => setView('forgot')}
-                    className="text-sm font-bold text-[#5a6561] hover:text-[#8e7cc3] transition-colors"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                </div>
-
-                <button 
-                  type="submit" disabled={isLoading}
-                  className="w-full flex justify-center items-center gap-2 py-3.5 px-4 rounded-xl text-base font-bold text-white bg-[#3a4d40] hover:bg-[#2d3c32] transition-all disabled:opacity-70 shadow-sm"
-                >
-                  {isLoading ? <><Loader2 className="animate-spin" size={18} /> Validando...</> : <>Entrar no Painel <ArrowRight size={18} /></>}
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-6">
-                <div className="p-6 bg-[#fbfbfa] border border-[#d2dad6] rounded-xl text-center">
-                  <h3 className="font-bold text-[#2c3531] mb-2">Ambiente Secure</h3>
-                  <p className="text-sm text-[#5a6561] font-light leading-relaxed">
-                    Para redefinir a sua palavra-passe, entre em contacto diretamente com o suporte técnico de desenvolvimento.
-                  </p>
-                </div>
-                
+              <div className="flex justify-end pt-1">
                 <button 
                   type="button" 
-                  onClick={() => setView('login')}
-                  className="w-full flex justify-center items-center gap-2 py-3 text-sm font-bold text-[#5a6561] hover:text-[#3a4d40] transition-colors"
+                  onClick={() => setView('forgot')}
+                  className="text-[10px] font-bold uppercase tracking-widest text-malu-text-muted hover:text-malu-lilac transition-colors"
                 >
-                  <ArrowLeft size={16} /> Voltar para Login
+                  Esqueceu a senha?
                 </button>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* Lado Direito */}
-        <div className="hidden md:flex w-1/2 bg-[#3a4d40] relative flex-col justify-center p-12 text-white overflow-hidden">
-          <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[#2d3c32] to-[#3a4d40] opacity-50 z-0"></div>
-          <div className="relative z-10 max-w-sm mx-auto">
-            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 border border-white/20 shadow-sm">
-               <LogIn className="text-white" size={32} />
+              <button 
+                type="submit" disabled={isLoading}
+                className="w-full flex items-center justify-center py-4 bg-malu-green text-white rounded-sm font-bold uppercase tracking-widest text-xs hover:bg-malu-green-dark transition-colors shadow-sm disabled:opacity-70 mt-4"
+              >
+                {isLoading ? <><Loader2 className="animate-spin mr-2" size={16} /> Entrando...</> : 'Entrar no Painel'}
+              </button>
+            </form>
+          ) : (
+            <div className="space-y-6">
+              <div className="p-6 bg-malu-bg border border-malu-green-light rounded-sm text-center">
+                <h3 className="font-serif text-xl text-malu-green-dark mb-2">Ambiente Seguro</h3>
+                <p className="text-sm text-malu-text-muted font-light leading-relaxed">
+                  Para redefinir a sua palavra-passe, entre em contacto diretamente com o suporte técnico.
+                </p>
+              </div>
+              
+              <button 
+                type="button" 
+                onClick={() => setView('login')}
+                className="w-full flex justify-center items-center gap-2 py-3 text-xs uppercase tracking-widest font-bold text-malu-text-muted hover:text-malu-green-dark transition-colors"
+              >
+                <ArrowLeft size={14} /> Voltar para Login
+              </button>
             </div>
-            <h2 className="text-3xl font-black tracking-tight leading-tight mb-4">Gestão de Conteúdo</h2>
-            <p className="text-[#e8ebe9] text-lg font-light leading-relaxed mb-8">
-              Publique novos artigos, atualize a sua vitrine de garagem e faça a gestão dos seus produtos com total autonomia e tranquilidade.
-            </p>
-            <div className="flex items-center gap-2 text-[#8e7cc3] text-xs font-bold uppercase tracking-widest">
-              <span className="w-2 h-2 rounded-full bg-[#8e7cc3] animate-pulse"></span>
-              CMS Malu v1.0.0
-            </div>
-          </div>
+          )}
         </div>
-
       </div>
     </div>
   );

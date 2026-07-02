@@ -1,65 +1,138 @@
-import { BookOpen, Sparkles, Store, Package } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { BookOpen, Sparkles, Store, Package, ArrowRight } from 'lucide-react';import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between p-6 relative overflow-hidden bg-[#fbfbfa]">
-      {/* Elementos Fluidos Orgânicos de Fundo */}
-      <div className="zen-blob w-[500px] h-[500px] -top-20 -left-20"></div>
-      <div className="zen-blob w-[600px] h-[600px] -bottom-40 -right-20"></div>
+    <div className="min-h-screen bg-malu-bg font-sans overflow-hidden relative">
+      
+      {/* === OVERLAY DE SOMBRAS BOTÂNICAS (IMAGEM LOCAL) === */}
+      {/* A imagem está na pasta public, logo usamos apenas '/sombra.jpg'. O Brave não consegue bloquear isto! */}
+      <div 
+        className="fixed inset-0 w-full h-full pointer-events-none z-50 opacity-20 mix-blend-multiply"
+        style={{
+          backgroundImage: "url('/sombra.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
+      {/* 1. HERO SECTION */}
+      <section className="relative w-full pt-20 pb-32 flex flex-col items-center justify-center text-center border-b border-malu-green-light/40">
+        <div className="z-10 max-w-4xl px-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-malu-card border border-malu-green-light shadow-sm text-[10px] font-bold text-malu-green-dark uppercase tracking-widest mb-8">
+            <Sparkles size={14} className="text-malu-lilac" />
+            <span>Bem-vinda ao Espaço Integrativo</span>
+          </div>
 
-      {/* Logo Minimalista no Topo (Item de Escopo do Contrato) */}
-      <header className="w-full max-w-6xl mx-auto flex justify-center pt-4 z-10">
-        <div className="flex items-center gap-2 tracking-[0.2em] text-[#3a4d40] font-light text-sm uppercase">
-          <span className="text-lg text-[#8e7cc3]">🌱</span>
-          <span>Malu Celeghim</span>
-          <span className="text-xs text-[#5a6561]/60">|</span>
-          <span className="text-xs text-[#5a6561] tracking-widest font-normal">Espaço Terapêutico</span>
+          <h1 className="text-6xl md:text-8xl font-serif text-malu-green-dark tracking-tight leading-none mb-6">
+            Mover a <span className="italic text-malu-green">Vida</span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-malu-text-muted max-w-2xl mx-auto leading-relaxed font-light mb-10">
+            Um portal dedicado ao bem-estar integral, ecologia e autoconhecimento. Alinhe as suas energias e encontre harmonia em todas as facetas da sua jornada.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/terapias" className="w-full sm:w-auto px-8 py-4 bg-malu-green text-white rounded-sm font-bold uppercase tracking-wider text-xs hover:bg-malu-green-dark transition-colors shadow-md">
+              Explorar Reflexões
+            </Link>
+            <Link to="/vitrine" className="w-full sm:w-auto px-8 py-4 bg-malu-card text-malu-green-dark border border-malu-green-light rounded-sm font-bold uppercase tracking-wider text-xs hover:bg-malu-bg transition-colors shadow-sm">
+              Venda de Garagem
+            </Link>
+          </div>
         </div>
-      </header>
+      </section>
 
-      {/* Conteúdo Centralizado */}
-      <div className="max-w-4xl w-full text-center z-10 space-y-8 my-auto animate-in fade-in zoom-in duration-500">
-        
-        {/* Badge de Boas-vindas */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#d2dad6] shadow-sm text-sm font-medium text-[#3a4d40]">
-          <Sparkles size={16} className="text-[#8e7cc3]" />
-          <span>Bem-vinda ao Espaço Integrativo</span>
+      {/* 2. QUEM SOMOS (ESTILO IZZY WAITE) */}
+      <section className="w-full relative py-32 flex items-center">
+        {/* Bloco Verde Assimétrico */}
+        <div className="absolute top-1/2 -translate-y-1/2 h-[80%] w-[35%] bg-malu-green/95 z-0 transition-all hidden md:block left-0 rounded-r-sm" />
+
+        <div className="max-w-6xl mx-auto px-6 w-full flex flex-col md:flex-row items-center gap-12 md:gap-20 relative z-10">
+          
+          {/* Imagem da Malu sobreposta */}
+          <div className="w-full md:w-1/2 relative flex justify-center">
+            <div className="w-full aspect-[4/5] max-w-[420px] overflow-hidden relative shadow-xl bg-white rounded-sm md:translate-x-10 group">
+              <img 
+                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800" 
+                alt="Malu Celeghim" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+              />
+            </div>
+          </div>
+          
+          {/* Texto Quem Somos */}
+          <div className="w-full md:w-1/2 flex flex-col justify-center text-left md:pl-6">
+            <h2 className="text-4xl md:text-5xl font-serif text-malu-green-dark mb-6 leading-tight">
+              Quem é a <span className="italic">Malu?</span>
+            </h2>
+            
+            <div className="text-malu-text-muted text-base leading-relaxed space-y-4 font-light mb-8">
+              <p>
+                Sou a Malu Celeghim, a voz por trás do Mover a Vida. Acredito que a cura e o bem-estar nascem do equilíbrio entre a nossa mente, o nosso corpo e o ambiente que nos rodeia.
+              </p>
+              <p>
+                Este espaço nasceu da vontade de partilhar estudos, práticas terapêuticas e reflexões sobre um estilo de vida mais consciente, ecológico e sustentável. O meu propósito é guiar-te na tua própria jornada de autoconhecimento.
+              </p>
+            </div>
+
+            <a href="mailto:moveravida@gmail.com" className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-malu-green border-b-2 border-malu-green pb-1 hover:text-malu-green-dark hover:border-malu-green-dark transition-colors w-fit relative z-20">
+              Falar com a Malu (moveravida@gmail.com) →
+            </a>
+          </div>
         </div>
+      </section>
 
-        {/* Título Principal */}
-        <h1 className="text-4xl md:text-6xl font-black text-[#2c3531] tracking-tight leading-tight">
-          Equilíbrio, Bem-estar e <br />
-          <span className="text-[#8e7cc3] drop-shadow-sm font-serif italic">Oportunidades</span>
-        </h1>
+      {/* 3. O QUE FAZEMOS */}
+      <section className="w-full bg-malu-card py-32 border-t border-malu-green-light/40 relative z-10">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-serif text-malu-green-dark mb-4">O Que Fazemos</h2>
+            <p className="text-malu-text-muted font-light text-lg">As frentes de atuação do projeto Mover a Vida.</p>
+          </div>
 
-        {/* Subtítulo */}
-        <p className="text-base md:text-lg text-[#5a6561] max-w-2xl mx-auto leading-relaxed font-light">
-          Acompanhe artigos e reflexões sobre terapias no nosso blog ou confira achados imperdíveis na nossa vitrine exclusiva.
-        </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-20">
+            {/* Card 1 */}
+            <Link to="/terapias" className="bg-malu-bg p-10 rounded-sm border border-malu-green-light hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer">
+              <BookOpen size={32} className="text-malu-green mb-6 group-hover:text-malu-lilac transition-colors" />
+              <h3 className="text-2xl font-serif text-malu-green-dark mb-4 group-hover:text-malu-green transition-colors">Reflexões & Blog</h3>
+              <p className="text-malu-text-muted font-light leading-relaxed mb-8 flex-1">
+                Artigos profundos sobre bem-estar, ecologia e práticas de autocuidado para nutrir a tua rotina.
+              </p>
+              <div className="text-xs uppercase tracking-widest font-bold text-malu-green group-hover:text-malu-lilac flex items-center gap-2 mt-auto">
+                Ler Blog <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
 
-        {/* Botões de Ação */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 max-w-2xl mx-auto">
-          <Link to="/terapias" className="w-full sm:w-1/3 flex items-center justify-center gap-2 px-6 py-4 bg-[#3a4d40] text-white rounded-xl font-medium hover:bg-[#2d3c32] transition-all shadow-md hover:shadow-lg">
-            <BookOpen size={18} />
-            Blog Terapias
-          </Link>
+            {/* Card 2 */}
+            <Link to="/produtos-adicionais" className="bg-malu-bg p-10 rounded-sm border border-malu-green-light hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer">
+              <Package size={32} className="text-malu-green mb-6 group-hover:text-malu-lilac transition-colors" />
+              <h3 className="text-2xl font-serif text-malu-green-dark mb-4 group-hover:text-malu-green transition-colors">Bem-Estar & Nutrição</h3>
+              <p className="text-malu-text-muted font-light leading-relaxed mb-8 flex-1">
+                Uma seleção de produtos físicos e suplementos voltados para a vitalidade e o equilíbrio do teu corpo.
+              </p>
+              <div className="text-xs uppercase tracking-widest font-bold text-malu-green group-hover:text-malu-lilac flex items-center gap-2 mt-auto">
+                Ver Produtos <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
 
-          <Link to="/vitrine" className="w-full sm:w-1/3 flex items-center justify-center gap-2 px-6 py-4 bg-white text-[#3a4d40] border border-[#d2dad6] rounded-xl font-medium hover:bg-[#e8ebe9] transition-all shadow-sm">
-            <Store size={18} />
-            Venda de Garagem
-          </Link>
-
-          <Link to="/produtos-adicionais" className="w-full sm:w-1/3 flex items-center justify-center gap-2 px-6 py-4 bg-white text-[#3a4d40] border border-[#d2dad6] rounded-xl font-medium hover:bg-[#e8ebe9] transition-all shadow-sm">
-            <Package size={18} />
-            Outros Produtos
-          </Link>
+            {/* Card 3 */}
+            <Link to="/vitrine" className="bg-malu-bg p-10 rounded-sm border border-malu-green-light hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer">
+              <Store size={32} className="text-malu-green mb-6 group-hover:text-malu-lilac transition-colors" />
+              <h3 className="text-2xl font-serif text-malu-green-dark mb-4 group-hover:text-malu-green transition-colors">Venda de Garagem</h3>
+              <p className="text-malu-text-muted font-light leading-relaxed mb-8 flex-1">
+                Achados especiais com história e energia renovada, disponíveis para encontrarem um novo lar.
+              </p>
+              <div className="text-xs uppercase tracking-widest font-bold text-malu-green group-hover:text-malu-lilac flex items-center gap-2 mt-auto">
+                Ver Vitrine <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Rodapé institucional discreto para fechar o layout executivo */}
-      <footer className="w-full text-center pb-2 text-xs text-[#5a6561]/50 z-10">
-        &copy; {new Date().getFullYear()} Espaço Malu Celeghim. Todos os direitos reservados.
+      <footer className="w-full text-center py-8 font-sans text-xs text-malu-text-muted/60 tracking-widest uppercase border-t border-malu-green-light/40 relative z-20 bg-malu-bg/80 backdrop-blur-sm">
+        &copy; {new Date().getFullYear()} Mover a Vida por Malu Celeghim.
       </footer>
     </div>
   );
