@@ -32,10 +32,15 @@ export default function Dashboard() {
   const [artigosCadastrados, setArtigosCadastrados] = useState<any[]>([]);
   const [produtosCadastrados, setProdutosCadastrados] = useState<any[]>([]);
   const [isLoadingListas, setIsLoadingListas] = useState(false);
+  const [isValidatingAuth, setIsValidatingAuth] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) navigate('/admin');
+    if (!token) {
+      navigate('/admin');
+    } else {
+      setIsValidatingAuth(false);
+    }
   }, [navigate]);
 
   const carregarListas = async () => {
@@ -263,6 +268,15 @@ export default function Dashboard() {
       } else setMensagem({ tipo: 'erro', texto: data.message || data.error || text || 'Erro ao atualizar dados.' });
     } catch { setMensagem({ tipo: 'erro', texto: 'Falha na rede.' }); } finally { setIsSubmitting(false); }
   };
+
+  if (isValidatingAuth) {
+    return (
+      <div className="min-h-screen bg-malu-bg flex flex-col items-center justify-center text-malu-text-muted">
+        <Loader2 className="animate-spin mb-4 text-malu-green" size={32} />
+        <p className="font-medium uppercase tracking-wider text-xs">A verificar credenciais...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-malu-bg flex font-sans text-malu-text-main">

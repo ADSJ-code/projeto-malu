@@ -138,6 +138,13 @@ export default function ProdutosAdicionais() {
             })}
           </div>
         )}
+        
+        <footer className="w-full text-center py-8 font-sans text-xs text-malu-text-muted/60 tracking-widest uppercase border-t border-malu-green-light/40 mt-16 relative z-20 bg-malu-bg/80 backdrop-blur-sm">
+          &copy; {new Date().getFullYear()} Mover a Vida por{' '}
+          <Link to="/admin" className="hover:text-malu-green-dark transition-colors border-b border-transparent hover:border-malu-green-dark/30">
+            Malu Celeghim
+          </Link>.
+        </footer>
       </div>
     </div>
   );
