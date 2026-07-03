@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LayoutDashboard, LogOut, PlusCircle, Settings, ArrowLeft, Loader2, CheckCircle, DollarSign, ExternalLink, UploadCloud, Eye, Image as ImageIcon, Tag, Calendar, User, Edit, Trash2, List } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const [vistaAtual, setVistaAtual] = useState<'visao-geral' | 'novo-artigo' | 'gerir-artigos' | 'novo-produto' | 'gerir-produtos' | 'configuracoes'>('visao-geral');
@@ -41,11 +42,11 @@ export default function Dashboard() {
   const carregarListas = async () => {
     setIsLoadingListas(true);
     try {
-      const resArt = await fetch('http://localhost:8080/api/posts');
+      const resArt = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`);
       const dataArt = await resArt.json();
       setArtigosCadastrados(dataArt || []);
 
-      const resProd = await fetch('http://localhost:8080/api/products');
+      const resProd = await fetch(`${import.meta.env.VITE_API_URL}/api/products`);
       const dataProd = await resProd.json();
       setProdutosCadastrados(dataProd || []);
     } catch (error) {
@@ -56,7 +57,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    setMensagem({ tipo: '', texto: '' }); // Limpa avisos antigos ao mudar de ecrã
+    setMensagem({ tipo: '', texto: '' }); 
     if (vistaAtual === 'gerir-artigos' || vistaAtual === 'gerir-produtos' || vistaAtual === 'visao-geral') {
       carregarListas();
     }
@@ -96,8 +97,8 @@ export default function Dashboard() {
     setMensagem({ tipo: '', texto: '' });
     
     const url = editandoArtigoId 
-      ? `http://localhost:8080/api/posts/${editandoArtigoId}` 
-      : 'http://localhost:8080/api/posts/create';
+      ? `${import.meta.env.VITE_API_URL}/api/posts/${editandoArtigoId}` 
+      : `${import.meta.env.VITE_API_URL}/api/posts/create`;
       
     const metodo = editandoArtigoId ? 'PUT' : 'POST';
 
@@ -129,7 +130,7 @@ export default function Dashboard() {
   const removerArtigo = async (id: string) => {
     if(!window.confirm("Tem certeza que deseja apagar permanentemente esta reflexão?")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/posts/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -160,12 +161,11 @@ export default function Dashboard() {
     setMensagem({ tipo: '', texto: '' });
     
     const url = editandoProdutoId 
-      ? `http://localhost:8080/api/products/${editandoProdutoId}` 
-      : 'http://localhost:8080/api/products/create';
+      ? `${import.meta.env.VITE_API_URL}/api/products/${editandoProdutoId}` 
+      : `${import.meta.env.VITE_API_URL}/api/products/create`;
       
     const metodo = editandoProdutoId ? 'PUT' : 'POST';
 
-    // Conversão segura do preço (troca vírgula por ponto para não quebrar o Go)
     let precoFormatado = precoProduto.toString().replace(',', '.');
     const finalPrice = parseFloat(precoFormatado);
 
@@ -197,7 +197,7 @@ export default function Dashboard() {
   const removerProduto = async (id: string) => {
     if(!window.confirm("Tem certeza que deseja apagar permanentemente este item?")) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/products/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
@@ -222,7 +222,7 @@ export default function Dashboard() {
     setIsSubmitting(true);
     setMensagem({ tipo: '', texto: '' });
     try {
-      const response = await fetch('http://localhost:8080/api/settings/update', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/settings/update`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: JSON.stringify({ email: novoEmail, new_password: novaSenha }),
       });
@@ -688,7 +688,7 @@ export default function Dashboard() {
                 <div className="bg-white rounded-sm overflow-hidden shadow-xl border border-malu-green-light flex flex-col pointer-events-none pb-4">
                   <div className="aspect-[4/3] overflow-hidden relative bg-malu-bg flex items-center justify-center">
                     <div className="absolute top-4 right-4 z-10 bg-malu-card/95 backdrop-blur-sm px-3 py-1.5 rounded-sm font-sans text-sm font-bold text-malu-green-dark shadow-sm border border-malu-green-light">
-                      R$ {precoProduto ? parseFloat(precoProduto).toFixed(2) : '0.00'}
+                      R$ {precoProduto ? parseFloat(precoProduto.replace(',', '.')).toFixed(2) : '0.00'}
                     </div>
                     {imgProduto ? (
                       <img src={imgProduto} alt="Produto" className="w-full h-full object-cover" />

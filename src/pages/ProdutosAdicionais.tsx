@@ -19,7 +19,7 @@ export default function ProdutosAdicionais() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/products')
+    fetch(`${import.meta.env.VITE_API_URL}/api/products`)
       .then(response => response.json())
       .then(data => {
         // Filtrar apenas os itens com a categoria "diversos"

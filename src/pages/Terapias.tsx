@@ -24,7 +24,7 @@ export default function Terapias() {
   const [ordenacao, setOrdenacao] = useState<'recentes' | 'antigos'>('recentes');
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/posts')
+    fetch(`${import.meta.env.VITE_API_URL}/api/posts`)
       .then(response => response.json())
       .then(data => {
         setArtigos(data || []);
