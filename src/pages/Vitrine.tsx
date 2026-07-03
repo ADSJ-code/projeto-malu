@@ -73,7 +73,7 @@ export default function Vitrine() {
             const isPar = index % 2 === 0;
             const bgClass = 'bg-malu-bg';
             
-            const btnClass = produto.status === 'vendido'
+            const btnClass = produto.status === 'esgotado'
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
               : 'bg-malu-green text-white hover:bg-malu-green-dark shadow-sm';
 
@@ -99,16 +99,16 @@ export default function Vitrine() {
                       className={`w-full aspect-[4/3] max-w-[480px] overflow-hidden relative shadow-xl bg-white rounded-sm
                         ${isPar ? 'md:translate-x-10' : 'md:-translate-x-10'}`}
                     >
-                      {produto.status === 'vendido' && (
+                      {produto.status === 'esgotado' && (
                         <div className="absolute top-6 left-6 z-10 bg-red-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest">
-                          Vendido
+                          Esgotado
                         </div>
                       )}
                       <img 
                         src={produto.image_url || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'} 
                         onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'; }}
                         alt={produto.name}
-                        className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-102 ${produto.status === 'vendido' ? 'grayscale opacity-70' : ''}`}
+                        className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-102 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
                       />
                     </div>
                   </div>
@@ -132,10 +132,10 @@ export default function Vitrine() {
                     <div>
                       <button 
                         onClick={() => comprarViaWhatsApp(produto.name, produto.price)}
-                        disabled={produto.status === 'vendido'}
+                        disabled={produto.status === 'esgotado'}
                         className={`px-8 py-4 rounded-sm font-bold uppercase tracking-wider text-xs transition-all ${btnClass}`}
                       >
-                        {produto.status === 'vendido' ? (
+                        {produto.status === 'esgotado' ? (
                           'Item Indisponível'
                         ) : (
                           <span className="flex items-center gap-2">Tenho Interesse <ArrowLeft size={16} className="rotate-180" /></span>

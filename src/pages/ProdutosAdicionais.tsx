@@ -92,10 +92,15 @@ export default function ProdutosAdicionais() {
                     {/* Imagem Limpa com Efeito Overlap */}
                     <div className="w-full md:w-1/2 relative flex justify-center">
                       <div className={`w-full aspect-[4/3] max-w-[480px] overflow-hidden relative shadow-xl transition-transform duration-500 hover:-translate-y-1 group bg-white rounded-sm ${isPar ? 'md:translate-x-10' : 'md:-translate-x-10'}`}>
+                        {produto.status === 'esgotado' && (
+                          <div className="absolute top-6 left-6 z-10 bg-red-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest">
+                            Esgotado
+                          </div>
+                        )}
                         <img 
                           src={produto.image_url || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'} 
                           alt={produto.name} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                          className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
                         />
                       </div>
                     </div>
@@ -120,9 +125,10 @@ export default function ProdutosAdicionais() {
                       <div>
                         <button 
                           onClick={() => lidarComInteresse(produto.name, produto.price)}
-                          className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-malu-green border-b-2 border-malu-green pb-1 hover:text-malu-green-dark hover:border-malu-green-dark transition-colors"
+                          disabled={produto.status === 'esgotado'}
+                          className={`inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold pb-1 transition-colors border-b-2 ${produto.status === 'esgotado' ? 'text-gray-400 border-gray-400 cursor-not-allowed' : 'text-malu-green border-malu-green hover:text-malu-green-dark hover:border-malu-green-dark'}`}
                         >
-                          <MessageCircle size={16} /> Adquirir via WhatsApp
+                          <MessageCircle size={16} /> {produto.status === 'esgotado' ? 'Produto Indisponível' : 'Adquirir via WhatsApp'}
                         </button>
                       </div>
                     </div>

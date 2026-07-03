@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, LogOut, PlusCircle, Settings, ArrowLeft, Loader2, CheckCircle, DollarSign, ExternalLink, UploadCloud, Eye, Image as ImageIcon, Tag, Calendar, User, Edit, Trash2, List } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { LayoutDashboard, LogOut, PlusCircle, Settings, ArrowLeft, Loader2, CheckCircle, DollarSign, ExternalLink, UploadCloud, Eye, Image as ImageIcon, Tag, Calendar, User, Edit, Trash2, List, PackageX, PackageCheck } from 'lucide-react';import { useNavigate, Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -205,6 +204,33 @@ export default function Dashboard() {
       else {
         const errText = await res.text();
         alert("Erro ao remover o item: " + errText);
+      }
+    } catch (e) {
+      alert("Falha de conexão com o servidor.");
+    }
+  };
+
+  const alternarEstoque = async (produto: any) => {
+    const novoStatus = produto.status === 'esgotado' ? 'disponivel' : 'esgotado';
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${produto.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        // Enviamos todos os dados originais + o novo status
+        body: JSON.stringify({ 
+          name: produto.name, 
+          description: produto.description, 
+          price: produto.price, 
+          image_url: produto.image_url, 
+          category: produto.category, 
+          status: novoStatus 
+        }),
+      });
+      
+      if(res.ok) {
+        carregarListas(); // Recarrega a tabela para mostrar o novo status
+      } else {
+        alert("Erro ao alterar o estoque.");
       }
     } catch (e) {
       alert("Falha de conexão com o servidor.");
@@ -465,6 +491,12 @@ export default function Dashboard() {
                                 </td>
                                 <td className="p-4 font-bold text-malu-green">R$ {produto.price.toFixed(2)}</td>
                                 <td className="p-4 flex items-center justify-end gap-3">
+                                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm mr-2 ${produto.status === 'esgotado' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>
+                                    {produto.status === 'esgotado' ? 'Esgotado' : 'Em Stock'}
+                                  </span>
+                                  <button onClick={() => alternarEstoque(produto)} className={`${produto.status === 'esgotado' ? 'text-green-500 hover:text-green-700' : 'text-orange-400 hover:text-orange-600'} transition-colors`} title={produto.status === 'esgotado' ? 'Marcar como Disponível' : 'Marcar como Esgotado'}>
+                                    {produto.status === 'esgotado' ? <PackageCheck size={18} /> : <PackageX size={18} />}
+                                  </button>
                                   <button onClick={() => prepararEdicaoProduto(produto)} className="text-malu-green hover:text-malu-green-dark transition-colors" title="Editar"><Edit size={18} /></button>
                                   <button onClick={() => removerProduto(produto.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Remover"><Trash2 size={18} /></button>
                                 </td>
@@ -505,6 +537,12 @@ export default function Dashboard() {
                                 </td>
                                 <td className="p-4 font-bold text-malu-green">R$ {produto.price.toFixed(2)}</td>
                                 <td className="p-4 flex items-center justify-end gap-3">
+                                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-sm mr-2 ${produto.status === 'esgotado' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>
+                                    {produto.status === 'esgotado' ? 'Esgotado' : 'Em Stock'}
+                                  </span>
+                                  <button onClick={() => alternarEstoque(produto)} className={`${produto.status === 'esgotado' ? 'text-green-500 hover:text-green-700' : 'text-orange-400 hover:text-orange-600'} transition-colors`} title={produto.status === 'esgotado' ? 'Marcar como Disponível' : 'Marcar como Esgotado'}>
+                                    {produto.status === 'esgotado' ? <PackageCheck size={18} /> : <PackageX size={18} />}
+                                  </button>
                                   <button onClick={() => prepararEdicaoProduto(produto)} className="text-malu-green hover:text-malu-green-dark transition-colors" title="Editar"><Edit size={18} /></button>
                                   <button onClick={() => removerProduto(produto.id)} className="text-red-400 hover:text-red-600 transition-colors" title="Remover"><Trash2 size={18} /></button>
                                 </td>
