@@ -333,9 +333,17 @@ export default function Dashboard() {
         {/* === VISTA 1: VISÃO GERAL === */}
         {vistaAtual === 'visao-geral' && (
           <div className="relative z-10 animate-fade-in max-w-6xl w-full">
-            <header className="mb-10">
-              <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight">Olá, Malu! ✨</h1>
-              <p className="text-malu-text-muted font-light mt-1">Bem-vinda ao seu centro de controlo do Mover a Vida.</p>
+            <header className="mb-10 flex items-start gap-6">
+              {/* Logo no Cabeçalho do Dashboard */}
+              <img 
+                src="/logo.svg" 
+                alt="Logo" 
+                className="w-16 h-16 object-contain hidden md:block" 
+              />
+              <div>
+                <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight">Olá, Malu! ✨</h1>
+                <p className="text-malu-text-muted font-light mt-1">Bem-vinda ao seu centro de controlo do Mover a Vida.</p>
+              </div>
             </header>
 
             {/* Cartões de Resumo Clicáveis */}

@@ -71,10 +71,18 @@ export default function AdminLogin() {
       <div className="w-full max-w-md relative z-10">
         
         {/* Cabeçalho do Login */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 flex flex-col items-center">
           <Link to="/" className="inline-flex items-center gap-2 text-xs font-bold text-malu-text-muted hover:text-malu-green-dark transition-colors mb-6 uppercase tracking-widest">
             <ArrowLeft size={16} /> Voltar ao Site
           </Link>
+          
+          {/* Logo Oficial Adicionada Aqui */}
+          <img 
+            src="/logo.svg" 
+            alt="Mover a Vida Logo" 
+            className="w-16 h-16 object-contain mb-3 opacity-90" 
+          />
+
           <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight italic">
             Mover a Vida
           </h1>
