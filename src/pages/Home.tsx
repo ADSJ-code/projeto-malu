@@ -19,10 +19,17 @@ export default function Home() {
       {/* 1. HERO SECTION */}
       <section className="relative w-full pt-20 pb-32 flex flex-col items-center justify-center text-center border-b border-malu-green-light/40">
         <div className="z-10 max-w-4xl px-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-malu-card border border-malu-green-light shadow-sm text-[10px] font-bold text-malu-green-dark uppercase tracking-widest mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-malu-card border border-malu-green-light shadow-sm text-[10px] font-bold text-malu-green-dark uppercase tracking-widest mb-6">
             <Sparkles size={14} className="text-malu-lilac" />
             <span>Bem-vinda ao Espaço Integrativo</span>
           </div>
+
+          {/* === LOGO OFICIAL === */}
+          <img 
+            src="/logo.svg" 
+            alt="Mover a Vida Logo" 
+            className="w-28 h-28 object-contain mx-auto mb-4 opacity-90 animate-fade-in" 
+          />
 
           <h1 className="text-6xl md:text-8xl font-serif text-malu-green-dark tracking-tight leading-none mb-6">
             Mover a <span className="italic text-malu-green">Vida</span>
