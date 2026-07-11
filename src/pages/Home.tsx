@@ -29,7 +29,7 @@ export default function Home() {
             <img 
               src="/logo.svg" 
               alt="Mover a Vida Logo" 
-              className="h-40 sm:h-48 md:h-64 w-auto object-contain mx-auto opacity-95 animate-fade-in" 
+              className="h-50 sm:h-58 md:h-74 w-auto object-contain mx-auto opacity-95 animate-fade-in" 
             />
             {/* Texto escondido apenas para o Google/SEO ler */}
             <span className="sr-only">Mover a Vida</span>
