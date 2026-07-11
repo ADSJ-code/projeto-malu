@@ -42,15 +42,12 @@ export default function Vitrine() {
     <div className="min-h-screen bg-malu-bg font-sans">
       <nav className="p-6 md:px-12 flex justify-between items-center bg-malu-bg/80 backdrop-blur-md sticky top-0 z-50 border-b border-malu-green-light/50">
         {/* Logo Clicável */}
-        <Link to="/" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center group">
           <img 
             src="/logo.svg" 
             alt="Mover a Vida Logo" 
-            className="w-10 h-10 object-contain transition-transform group-hover:scale-105" 
+            className="h-16 sm:h-20 w-auto object-contain transition-transform group-hover:scale-105" 
           />
-          <div className="text-xl font-serif text-malu-green-dark tracking-wide">
-            Mover a <span className="italic font-light text-malu-green">Vida</span>
-          </div>
         </Link>
         
         {/* Botão Voltar */}

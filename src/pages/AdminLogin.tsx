@@ -76,16 +76,13 @@ export default function AdminLogin() {
             <ArrowLeft size={16} /> Voltar ao Site
           </Link>
           
-          {/* Logo Oficial Adicionada Aqui */}
+          {/* Logo Oficial */}
           <img 
             src="/logo.svg" 
             alt="Mover a Vida Logo" 
-            className="w-16 h-16 object-contain mb-3 opacity-90" 
+            className="h-20 sm:h-24 w-auto object-contain mb-6 opacity-95" 
           />
-
-          <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight italic">
-            Mover a Vida
-          </h1>
+          <h1 className="sr-only">Mover a Vida</h1>
           <p className="text-malu-text-muted mt-2 text-sm uppercase tracking-widest">
             {view === 'login' ? 'Acesso Restrito' : 'Recuperar Acesso'}
           </p>

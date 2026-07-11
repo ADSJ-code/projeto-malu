@@ -25,14 +25,14 @@ export default function Home() {
           </div>
 
           {/* === LOGO OFICIAL === */}
-          <img 
-            src="/logo.svg" 
-            alt="Mover a Vida Logo" 
-            className="w-28 h-28 object-contain mx-auto mb-4 opacity-90 animate-fade-in" 
-          />
-
-          <h1 className="text-6xl md:text-8xl font-serif text-malu-green-dark tracking-tight leading-none mb-6">
-            Mover a <span className="italic text-malu-green">Vida</span>
+          <h1 className="w-full flex justify-center mb-10">
+            <img 
+              src="/logo.svg" 
+              alt="Mover a Vida Logo" 
+              className="h-40 sm:h-48 md:h-64 w-auto object-contain mx-auto opacity-95 animate-fade-in" 
+            />
+            {/* Texto escondido apenas para o Google/SEO ler */}
+            <span className="sr-only">Mover a Vida</span>
           </h1>
 
           <p className="text-lg md:text-xl text-malu-text-muted max-w-2xl mx-auto leading-relaxed font-light mb-10">
