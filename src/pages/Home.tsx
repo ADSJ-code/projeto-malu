@@ -44,7 +44,7 @@ export default function Home() {
               Explorar Reflexões
             </Link>
             <Link to="/vitrine" className="w-full sm:w-auto px-8 py-4 bg-malu-card text-malu-green-dark border border-malu-green-light rounded-sm font-bold uppercase tracking-wider text-xs hover:bg-malu-bg transition-colors shadow-sm">
-              Venda de Garagem
+              Desapego
             </Link>
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function Home() {
             {/* Card 3 */}
             <Link to="/vitrine" className="bg-malu-bg p-10 rounded-sm border border-malu-green-light hover:shadow-md transition-all hover:-translate-y-1 group flex flex-col cursor-pointer">
               <Store size={32} className="text-malu-green mb-6 group-hover:text-malu-lilac transition-colors" />
-              <h3 className="text-2xl font-serif text-malu-green-dark mb-4 group-hover:text-malu-green transition-colors">Venda de Garagem</h3>
+              <h3 className="text-2xl font-serif text-malu-green-dark mb-4 group-hover:text-malu-green transition-colors">Desapego</h3>
               <p className="text-malu-text-muted font-light leading-relaxed mb-8 flex-1">
                 Achados especiais com história e energia renovada, disponíveis para encontrarem um novo lar.
               </p>

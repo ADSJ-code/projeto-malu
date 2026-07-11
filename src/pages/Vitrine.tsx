@@ -34,7 +34,7 @@ export default function Vitrine() {
   }, []);
 
   const comprarViaWhatsApp = (nomeProduto: string, precoProduto: number) => {
-    const mensagem = `Olá, Malu! Tenho interesse no item da sua Venda de Garagem: *${nomeProduto}* (R$ ${precoProduto.toFixed(2)}). Ele ainda está disponível?`;
+    const mensagem = `Olá, Malu! Tenho interesse no item da página de Desapego: *${nomeProduto}* (R$ ${precoProduto.toFixed(2)}). Ele ainda está disponível?`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
@@ -58,7 +58,7 @@ export default function Vitrine() {
 
       <div className="w-full bg-malu-bg pt-16 pb-20 text-center border-b border-malu-green-light/40">
         <h1 className="text-5xl md:text-6xl font-serif text-malu-green-dark tracking-tight italic mb-6">
-          Venda de Garagem
+          Desapego
         </h1>
         <p className="text-malu-text-muted max-w-2xl mx-auto font-light text-lg px-6">
           Achados especiais, livros e itens com história, agora disponíveis para encontrarem um novo lar e novas energias.
@@ -75,7 +75,7 @@ export default function Vitrine() {
           <div className="text-center py-32 px-6 max-w-2xl mx-auto">
             <Tag className="mx-auto text-malu-green-light mb-6" size={48} />
             <h3 className="text-3xl font-serif text-malu-green-dark mb-4">A vitrine está vazia</h3>
-            <p className="text-malu-text-muted font-light text-lg">Nenhum item adicionado à venda de garagem de momento.</p>
+            <p className="text-malu-text-muted font-light text-lg">Nenhum item adicionado à página de Desapego de momento.</p>
           </div>
         ) : (
           produtos.map((produto, index) => {
@@ -162,7 +162,7 @@ export default function Vitrine() {
           <div className="max-w-3xl mx-auto px-6 flex flex-col sm:flex-row items-center gap-4 text-malu-text-muted">
             <Info size={24} className="flex-shrink-0 text-malu-green" />
             <p className="text-sm font-light text-center sm:text-left">
-              Os itens da Venda de Garagem são únicos e sujeitos à disponibilidade. O pagamento e a forma de entrega serão combinados diretamente pelo WhatsApp.
+              Os itens da página de Desapego são únicos e sujeitos à disponibilidade. O pagamento e a forma de entrega serão combinados diretamente pelo WhatsApp.
             </p>
           </div>
         </div>

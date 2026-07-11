@@ -531,10 +531,10 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Tabela 2: Venda de Garagem */}
+                {/* Tabela 2: Desapego */}
                 <div>
                   <div className="flex items-center gap-3 mb-4 border-b border-malu-green-light pb-2">
-                    <h2 className="text-xl font-serif text-malu-green-dark">Venda de Garagem</h2>
+                    <h2 className="text-xl font-serif text-malu-green-dark">Desapego</h2>
                     <span className="px-2 py-0.5 bg-malu-green-light/30 text-malu-green-dark text-[10px] uppercase tracking-widest font-bold rounded-sm border border-malu-green-light">Vitrine</span>
                   </div>
                   <div className="bg-malu-card rounded-sm border border-malu-green-light shadow-sm overflow-hidden">
@@ -710,7 +710,7 @@ export default function Dashboard() {
                     <div>
                       <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Categoria de Destino</label>
                       <select value={catProduto} onChange={(e) => setCatProduto(e.target.value)} className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-light uppercase tracking-wider text-xs">
-                        <option value="garagem">Venda de Garagem</option>
+                        <option value="garagem">Desapego</option>
                         <option value="diversos">Bem-Estar & Nutrição</option>
                       </select>
                     </div>
