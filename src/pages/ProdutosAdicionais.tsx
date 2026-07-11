@@ -46,7 +46,7 @@ export default function ProdutosAdicionais() {
           <img 
             src="/logo.svg" 
             alt="Mover a Vida Logo" 
-            className="h-16 sm:h-20 w-auto object-contain transition-transform group-hover:scale-105" 
+            className="h-16 sm:h-24 w-auto object-contain transition-transform group-hover:scale-105" 
           />
         </Link>
         
