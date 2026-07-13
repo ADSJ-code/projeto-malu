@@ -80,7 +80,7 @@ export default function AdminLogin() {
           <img 
             src="/logo.svg" 
             alt="Mover a Vida Logo" 
-            className="h-24 sm:h-24 w-auto object-contain mb-6 opacity-95" 
+            className="h-34 sm:h-34 w-auto object-contain mb-6 opacity-95" 
           />
           <h1 className="sr-only">Mover a Vida</h1>
           <p className="text-malu-text-muted mt-2 text-sm uppercase tracking-widest">
