@@ -338,7 +338,7 @@ export default function Dashboard() {
               <img 
                 src="/logo.svg" 
                 alt="Logo" 
-                className="w-16 h-16 object-contain hidden md:block" 
+                className="w-16 h-24 object-contain hidden md:block" 
               />
               <div>
                 <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight">Olá, Malu! ✨</h1>
