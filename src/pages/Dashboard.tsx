@@ -342,7 +342,7 @@ export default function Dashboard() {
               />
               <div>
                 <h1 className="text-4xl font-serif text-malu-green-dark tracking-tight">Olá, Malu!</h1>
-                <p className="text-malu-text-muted font-light mt-1">Bem-vinda ao seu centro de controlo do Mover a Vida.</p>
+                <p className="text-malu-text-muted font-light mt-1">Bem-vinda ao seu centro de controle do Mover a Vida.</p>
               </div>
             </header>
 
