@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Tag, Loader2, Info, Leaf, Flower2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
+import { Moon, Sun } from 'lucide-react';
 interface Produto {
   id: string;
   name: string;

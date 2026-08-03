@@ -68,7 +68,12 @@ func main() {
     http.HandleFunc("/api/products/create", enableCORS(middleware.JWTMiddleware(handlers.CreateProductHandler)))
     http.HandleFunc("/api/products", enableCORS(handlers.GetProductsHandler))
     http.HandleFunc("/api/products/", enableCORS(middleware.JWTMiddleware(handlers.ManageProductHandler))) // Nova rota para Edição (PUT) e Remoção (DELETE)
-	port := os.Getenv("PORT")
+
+    // Rotas de Conteúdo Estático (Home)
+    http.HandleFunc("/api/content/home", enableCORS(handlers.GetHomeContentHandler)) // Pública para o site carregar
+    http.HandleFunc("/api/content/home/update", enableCORS(middleware.JWTMiddleware(handlers.UpdateHomeContentHandler))) // Protegida para a Malu salvar
+
+    port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}

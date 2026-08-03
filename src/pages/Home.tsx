@@ -1,6 +1,39 @@
-import { BookOpen, Sparkles, Store, Package, ArrowRight } from 'lucide-react';import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BookOpen, Sparkles, Store, Package, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
+  // Estados para os textos vindos da Base de Dados
+  const [textosHome, setTextosHome] = useState({
+    heroTitle: '',
+    heroText: '',
+    bioTitle: '',
+    bioText: ''
+  });
+
+  // Buscar os textos no MongoDB ao carregar a página
+  useEffect(() => {
+    const carregarTextos = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/content/home`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            setTextosHome({
+              heroTitle: data.heroTitle || '',
+              heroText: data.heroText || '',
+              bioTitle: data.bioTitle || '',
+              bioText: data.bioText || ''
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao carregar textos da Home", error);
+      }
+    };
+    carregarTextos();
+  }, []);
+
   return (
     <div className="min-h-screen bg-malu-bg font-sans overflow-hidden relative">
       
@@ -21,7 +54,7 @@ export default function Home() {
         <div className="z-10 max-w-4xl px-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-sm bg-malu-card border border-malu-green-light shadow-sm text-[10px] font-bold text-malu-green-dark uppercase tracking-widest mb-6">
             <Sparkles size={14} className="text-malu-lilac" />
-            <span>Bem-vinda ao Espaço Integrativo</span>
+            <span>{textosHome.heroTitle || 'Bem-vinda ao Espaço Integrativo'}</span>
           </div>
 
           {/* === LOGO OFICIAL === */}
@@ -35,8 +68,8 @@ export default function Home() {
             <span className="sr-only">Mover a Vida</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-malu-text-muted max-w-2xl mx-auto leading-relaxed font-light mb-10">
-            Um portal dedicado ao bem-estar integral, ecologia e autoconhecimento. Alinhe as suas energias e encontre harmonia em todas as facetas da sua jornada.
+          <p className="text-lg md:text-xl text-malu-text-muted max-w-2xl mx-auto leading-relaxed font-light mb-10 whitespace-pre-wrap">
+            {textosHome.heroText || 'Um portal dedicado ao bem-estar integral, ecologia e autoconhecimento. Alinhe as suas energias e encontre harmonia em todas as facetas da sua jornada.'}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -71,16 +104,11 @@ export default function Home() {
           {/* Texto Quem Somos */}
           <div className="w-full md:w-1/2 flex flex-col justify-center text-left md:pl-6">
             <h2 className="text-4xl md:text-5xl font-serif text-malu-green-dark mb-6 leading-tight">
-              Quem é a <span className="italic">Malu?</span>
+              {textosHome.bioTitle || 'Quem é a Malu?'}
             </h2>
             
-            <div className="text-malu-text-muted text-base leading-relaxed space-y-4 font-light mb-8">
-              <p>
-                Sou a Malu Celeghim, a voz por trás do Mover a Vida. Acredito que a cura e o bem-estar nascem do equilíbrio entre a nossa mente, o nosso corpo e o ambiente que nos rodeia.
-              </p>
-              <p>
-                Este espaço nasceu da vontade de partilhar estudos, práticas terapêuticas e reflexões sobre um estilo de vida mais consciente, ecológico e sustentável. O meu propósito é guiar-te na tua própria jornada de autoconhecimento.
-              </p>
+            <div className="text-malu-text-muted text-base leading-relaxed font-light mb-8 whitespace-pre-wrap text-justify">
+              {textosHome.bioText || 'Sou a Malu Celeghim, a voz por trás do Mover a Vida. Acredito que a cura e o bem-estar nascem do equilíbrio entre a nossa mente, o nosso corpo e o ambiente que nos rodeia.\n\nEste espaço nasceu da vontade de partilhar estudos, práticas terapêuticas e reflexões sobre um estilo de vida mais consciente, ecológico e sustentável. O meu propósito é guiar-te na tua própria jornada de autoconhecimento.'}
             </div>
 
             <a href="mailto:moveravida@gmail.com" className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-malu-green border-b-2 border-malu-green pb-1 hover:text-malu-green-dark hover:border-malu-green-dark transition-colors w-fit relative z-20">

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,30 +8,32 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'], // Fonte base moderna e limpa
-        serif: ['"Playfair Display"', 'Georgia', 'serif'], // Fonte elegante para Títulos (como nas imagens)
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       colors: {
-        // Paleta "Wellness & Healing" extraída das referências
         malu: {
-          bg: '#f8f5f0',       // Fundo Bege/Areia muito suave (Base)
-          card: '#ffffff',     // Branco puro para destacar conteúdo
+          bg: '#f8f5f0',
+          darkbg: '#1a1f1c',
+          card: '#ffffff',
+          darkcard: '#242a27',
           green: {
-            light: '#d2dacb',  // Verde pastoso para fundos de botões/tags
-            DEFAULT: '#526658', // Verde Floresta/Sálvia (Exato da referência "Izzy Waite")
-            dark: '#394a3e',   // Verde profundo para Hover e Títulos
+            light: '#d2dacb',
+            DEFAULT: '#526658',
+            dark: '#394a3e',
           },
           lilac: {
-            DEFAULT: '#9f8db3', // Toque espiritual do Reiki
+            DEFAULT: '#9f8db3',
             light: '#e6e1ed',
           },
           text: {
-            main: '#2c3531',   // Preto carvão, macio de ler
-            muted: '#7a857f'   // Texto descritivo mais suave
+            main: '#2c3531',
+            darkmain: '#e8e6e1',
+            muted: '#7a857f'
           }
         }
       }
-    },
+    }
   },
   plugins: [],
 }

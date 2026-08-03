@@ -9,7 +9,8 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-malu-bg text-malu-text-main font-sans min-h-screen antialiased;
+    /* Adicionámos dark:bg-malu-darkbg e dark:text-malu-text-darkmain com transition */
+    @apply bg-malu-bg dark:bg-malu-darkbg text-malu-text-main dark:text-malu-text-darkmain font-sans min-h-screen antialiased transition-colors duration-500;
   }
   
   /* Faz com que todos os Títulos gigantes usem a fonte Serifada elegante */

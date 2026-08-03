@@ -1,12 +1,19 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, LogOut, PlusCircle, Settings, ArrowLeft, Loader2, CheckCircle, DollarSign, ExternalLink, UploadCloud, Eye, Image as ImageIcon, Tag, Calendar, User, Edit, Trash2, List, PackageX, PackageCheck } from 'lucide-react';import { useNavigate, Link } from 'react-router-dom';
+import { LayoutDashboard, LogOut, PlusCircle, Settings, ArrowLeft, Loader2, CheckCircle, DollarSign, ExternalLink, UploadCloud, Eye, Image as ImageIcon, Tag, Calendar, User, Edit, Trash2, List, PackageX, PackageCheck, Home as HomeIcon } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [vistaAtual, setVistaAtual] = useState<'visao-geral' | 'novo-artigo' | 'gerir-artigos' | 'novo-produto' | 'gerir-produtos' | 'configuracoes'>('visao-geral');
+  const [vistaAtual, setVistaAtual] = useState<'visao-geral' | 'novo-artigo' | 'gerir-artigos' | 'novo-produto' | 'gerir-produtos' | 'configuracoes' | 'configuracoes-home'>('visao-geral');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
+
+  // Estados para Textos da Home
+  const [heroTitle, setHeroTitle] = useState('');
+  const [heroText, setHeroText] = useState('');
+  const [bioTitle, setBioTitle] = useState('');
+  const [bioText, setBioText] = useState('');
   
   // Estados para CRUD Artigo
   const [editandoArtigoId, setEditandoArtigoId] = useState<string | null>(null);
@@ -60,10 +67,28 @@ export default function Dashboard() {
     }
   };
 
+  const carregarDadosHome = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/content/home`);
+      const data = await res.json();
+      if (data) {
+        setHeroTitle(data.heroTitle || '');
+        setHeroText(data.heroText || '');
+        setBioTitle(data.bioTitle || '');
+        setBioText(data.bioText || '');
+      }
+    } catch (error) {
+      console.error("Erro ao carregar textos da Home", error);
+    }
+  };
+
   useEffect(() => {
     setMensagem({ tipo: '', texto: '' }); 
     if (vistaAtual === 'gerir-artigos' || vistaAtual === 'gerir-produtos' || vistaAtual === 'visao-geral') {
       carregarListas();
+    }
+    if (vistaAtual === 'configuracoes-home') {
+      carregarDadosHome();
     }
   }, [vistaAtual]);
 
@@ -269,6 +294,27 @@ export default function Dashboard() {
     } catch { setMensagem({ tipo: 'erro', texto: 'Falha na rede.' }); } finally { setIsSubmitting(false); }
   };
 
+  const handleAtualizarHome = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setMensagem({ tipo: '', texto: '' });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/content/home/update`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        body: JSON.stringify({ heroTitle, heroText, bioTitle, bioText }),
+      });
+      
+      const text = await response.text();
+      let data: any = {};
+      try { data = JSON.parse(text); } catch (err) { data = { message: text }; }
+
+      if (response.ok) {
+        setMensagem({ tipo: 'sucesso', texto: 'Textos da Home atualizados com sucesso!' });
+      } else setMensagem({ tipo: 'erro', texto: data.message || data.error || text || 'Erro ao atualizar dados.' });
+    } catch { setMensagem({ tipo: 'erro', texto: 'Falha na rede.' }); } finally { setIsSubmitting(false); }
+  };
+
   if (isValidatingAuth) {
     return (
       <div className="min-h-screen bg-malu-bg flex flex-col items-center justify-center text-malu-text-muted">
@@ -315,6 +361,9 @@ export default function Dashboard() {
         </nav>
 
         <div className="p-4 border-t border-white/10 space-y-2">
+          <button onClick={() => setVistaAtual('configuracoes-home')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm font-medium text-sm transition-colors ${vistaAtual === 'configuracoes-home' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5'}`}>
+            <HomeIcon size={18} /> Textos da Home
+          </button>
           <button onClick={() => setVistaAtual('configuracoes')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-sm font-medium text-sm transition-colors ${vistaAtual === 'configuracoes' ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/5'}`}>
             <Settings size={18} /> Configurações
           </button>
@@ -798,6 +847,94 @@ export default function Dashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* === CONFIGURAÇÕES DA HOME === */}
+        {vistaAtual === 'configuracoes-home' && (
+          <div className="relative z-10 animate-fade-in max-w-6xl w-full">
+            <h1 className="text-3xl font-serif text-malu-green-dark mb-8">Editar Textos da Home</h1>
+            
+            {mensagem.texto && (
+              <div className={`p-4 rounded-sm mb-6 flex items-center gap-2 text-sm font-bold uppercase tracking-widest ${mensagem.tipo === 'sucesso' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'} border`}>
+                <CheckCircle size={18} /> {mensagem.texto}
+              </div>
+            )}
+
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              {/* Lado Esquerdo: Formulário */}
+              <div className="w-full lg:w-3/5">
+                <form onSubmit={handleAtualizarHome} className="bg-malu-card p-8 rounded-sm border border-malu-green-light shadow-sm space-y-8">
+                  {/* Seção Principal (Hero) */}
+                  <div>
+                    <h3 className="text-lg font-serif text-malu-green-dark border-b border-malu-green-light pb-2 mb-4">Secção Principal (Topo do Site)</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Título Principal (Slogan)</label>
+                        <input type="text" value={heroTitle} onChange={(e) => setHeroTitle(e.target.value)} placeholder="Ex: O movimento cura." className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-serif text-lg text-malu-green-dark" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Texto de Apoio (Descrição)</label>
+                        <textarea value={heroText} onChange={(e) => setHeroText(e.target.value)} rows={3} placeholder="Ex: Bem-vindos ao meu espaço..." className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none resize-none font-light"></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Seção Bio */}
+                  <div>
+                    <h3 className="text-lg font-serif text-malu-green-dark border-b border-malu-green-light pb-2 mb-4">Secção Quem é a Malu</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Título da Bio</label>
+                        <input type="text" value={bioTitle} onChange={(e) => setBioTitle(e.target.value)} placeholder="Ex: Olá, eu sou a Malu" className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-serif text-lg text-malu-green-dark" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Texto Completo da Bio</label>
+                        <textarea value={bioText} onChange={(e) => setBioText(e.target.value)} rows={6} placeholder="Pode dar Enters para pular linhas..." className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-light"></textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 flex justify-end">
+                    <button type="submit" disabled={isSubmitting} className="px-10 py-4 bg-malu-green text-white rounded-sm font-bold uppercase tracking-widest text-xs hover:bg-malu-green-dark shadow-sm transition-all flex items-center gap-2">
+                      {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : 'Guardar Textos do Site'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Lado Direito: Pré-visualização do Site */}
+              <div className="w-full lg:w-2/5 sticky top-8">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-4">
+                  <Eye size={14} /> Visão do Visitante no Site
+                </div>
+                
+                <div className="bg-white rounded-sm overflow-hidden shadow-xl border border-malu-green-light flex flex-col pointer-events-none">
+                  {/* Mini Cabeçalho Hero */}
+                  <div className="bg-malu-green-dark text-white p-8 text-center flex flex-col justify-center min-h-[200px]">
+                    <h2 className="font-serif text-2xl md:text-3xl mb-3 leading-tight drop-shadow-md">
+                      {heroTitle || 'O Slogan da Malu...'}
+                    </h2>
+                    <p className="font-light text-xs text-white/80 whitespace-pre-wrap leading-relaxed line-clamp-3">
+                      {heroText || 'O texto de apresentação inicial ficará aqui.'}
+                    </p>
+                  </div>
+                  
+                  {/* Mini Secção Bio */}
+                  <div className="bg-malu-bg p-8 flex flex-col text-center items-center border-t border-malu-green-light/40 relative overflow-hidden">
+                    <div className="w-16 h-16 rounded-full bg-malu-green-light/30 border border-malu-green-light mb-4 flex items-center justify-center text-malu-green-dark shadow-sm">
+                      <User size={24}/>
+                    </div>
+                    <h3 className="font-serif text-malu-green-dark text-xl mb-3">
+                      {bioTitle || 'O título de quem é a Malu'}
+                    </h3>
+                    <p className="text-malu-text-muted font-light text-[11px] leading-relaxed line-clamp-6 whitespace-pre-wrap text-justify">
+                      {bioText || 'Toda a história, formação e jornada descritiva aparecerão neste bloco no site principal...'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
