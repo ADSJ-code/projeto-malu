@@ -53,7 +53,7 @@ export default function ProdutosAdicionais() {
   }, []);
 
   const lidarComInteresse = (nomeProduto: string, precoProduto: number) => {
-    const mensagem = `Olá, Malu! Vi a sua página do Mover a Vida e tenho interesse no produto: *"${nomeProduto}"* (R$ ${precoProduto.toFixed(2)}). Como faço para prosseguir?`;
+    const mensagem = `Olá, Malu! Vi a sua página do Mover a Vida e tenho interesse no produto: *"${nomeProduto}"* (R$ ${precoProduto.toFixed(2).replace('.', ',')}). Como faço para prosseguir?`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
@@ -137,7 +137,7 @@ export default function ProdutosAdicionais() {
                                 src={images[currentIndex]} 
                                 onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'; }}
                                 alt={`${produto.name} - Imagem ${currentIndex + 1}`}
-                                className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
+                                className={`w-full h-full object-contain p-4 bg-white transition-transform duration-1000 group-hover:scale-105 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
                               />
                               
                               {/* Controlos da Galeria */}
@@ -172,12 +172,12 @@ export default function ProdutosAdicionais() {
                     </div>
                     
                     {/* Conteúdo Textual */}
-                    <div className={`w-full md:w-1/2 flex flex-col justify-center text-left ${isPar ? 'md:pl-6' : 'md:pr-6'}`}>
+                    <div translate="no" className={`w-full md:w-1/2 flex flex-col justify-center text-left ${isPar ? 'md:pl-6' : 'md:pr-6'}`}>
                       
                       <div className="flex items-center gap-3 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-5 text-malu-text-muted">
                         <span className="text-malu-lilac flex items-center gap-1"><Sparkles size={12}/> Exclusivo</span>
                         <span className="text-malu-green-light/50">|</span>
-                        <span className="text-malu-green font-sans text-sm">R$ {produto.price.toFixed(2)}</span>
+                        <span className="text-malu-green font-sans text-sm">R$ {produto.price.toFixed(2).replace('.', ',')}</span>
                       </div>
                       
                       <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-malu-green-dark mb-6 leading-tight hover:text-malu-green transition-colors">

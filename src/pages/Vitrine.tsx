@@ -53,7 +53,7 @@ export default function Vitrine() {
   }, []);
 
   const comprarViaWhatsApp = (nomeProduto: string, precoProduto: number) => {
-    const mensagem = `Olá, Malu! Tenho interesse no item da página de Desapego: *${nomeProduto}* (R$ ${precoProduto.toFixed(2)}). Ele ainda está disponível?`;
+    const mensagem = `Olá, Malu! Tenho interesse no item da página de Desapego: *${nomeProduto}* (R$ ${precoProduto.toFixed(2).replace('.', ',')}). Ele ainda está disponível?`;
     window.open(`https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
@@ -141,11 +141,11 @@ export default function Vitrine() {
                         return (
                           <>
                             <img 
-                              src={images[currentIndex]} 
-                              onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'; }}
-                              alt={`${produto.name} - Imagem ${currentIndex + 1}`}
-                              className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-102 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
-                            />
+                                src={images[currentIndex]} 
+                                onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'; }}
+                                alt={`${produto.name} - Imagem ${currentIndex + 1}`}
+                                className={`w-full h-full object-contain p-4 transition-transform duration-1000 group-hover:scale-102 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
+                              />
                             
                             {/* Controlos da Galeria (Aparecem no hover se houver mais de uma foto) */}
                             {hasMultiple && (
@@ -180,9 +180,9 @@ export default function Vitrine() {
                   </div>
                   
                   {/* Conteúdo do Produto */}
-                  <div className="w-full md:w-1/2 flex flex-col justify-center">
+                  <div translate="no" className="w-full md:w-1/2 flex flex-col justify-center">
                     <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest mb-4">
-                      <span className="text-malu-lilac">R$ {produto.price.toFixed(2)}</span>
+                      <span className="text-malu-lilac">R$ {produto.price.toFixed(2).replace('.', ',')}</span>
                       <span className="text-malu-green-light/50">|</span>
                       <span className="text-malu-text-muted font-light">
                         {produto.category === 'garagem' ? 'Desapegos' : produto.category}
