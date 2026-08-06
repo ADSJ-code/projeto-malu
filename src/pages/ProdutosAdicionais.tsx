@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, MessageCircle, Sparkles, Leaf, Flower2, Loader2, PackageOpen } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Sparkles, Leaf, Flower2, Loader2, PackageOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Produto {
@@ -17,6 +17,25 @@ export default function ProdutosAdicionais() {
   
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeImageIndexes, setActiveImageIndexes] = useState<{[key: string]: number}>({});
+
+  const handleNextImage = (productId: string, maxIndex: number) => {
+    setActiveImageIndexes(prev => ({
+      ...prev,
+      [productId]: prev[productId] !== undefined 
+        ? (prev[productId] === maxIndex ? 0 : prev[productId] + 1)
+        : 1
+    }));
+  };
+
+  const handlePrevImage = (productId: string, maxIndex: number) => {
+    setActiveImageIndexes(prev => ({
+      ...prev,
+      [productId]: prev[productId] !== undefined 
+        ? (prev[productId] === 0 ? maxIndex : prev[productId] - 1)
+        : maxIndex
+    }));
+  };
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/products`)
@@ -98,19 +117,57 @@ export default function ProdutosAdicionais() {
 
                   <div className={`max-w-6xl mx-auto px-6 w-full flex flex-col ${isPar ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-12 md:gap-20 relative z-10`}>
                     
-                    {/* Imagem Limpa com Efeito Overlap */}
+                    {/* Imagem Limpa com Efeito Overlap e Galeria */}
                     <div className="w-full md:w-1/2 relative flex justify-center">
                       <div className={`w-full aspect-[4/3] max-w-[480px] overflow-hidden relative shadow-xl transition-transform duration-500 hover:-translate-y-1 group bg-white rounded-sm ${isPar ? 'md:translate-x-10' : 'md:-translate-x-10'}`}>
                         {produto.status === 'esgotado' && (
-                          <div className="absolute top-6 left-6 z-10 bg-red-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest">
+                          <div className="absolute top-6 left-6 z-20 bg-red-900/80 backdrop-blur-sm text-white px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest">
                             Esgotado
                           </div>
                         )}
-                        <img 
-                          src={produto.image_url || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'} 
-                          alt={produto.name} 
-                          className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
-                        />
+                        
+                        {(() => {
+                          const images = produto.image_url ? produto.image_url.split(',') : ['https://images.unsplash.com/photo-1513519245088-0e12902e5a38'];
+                          const currentIndex = activeImageIndexes[produto.id] || 0;
+                          const hasMultiple = images.length > 1;
+
+                          return (
+                            <>
+                              <img 
+                                src={images[currentIndex]} 
+                                onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'; }}
+                                alt={`${produto.name} - Imagem ${currentIndex + 1}`}
+                                className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ${produto.status === 'esgotado' ? 'grayscale opacity-70' : ''}`}
+                              />
+                              
+                              {/* Controlos da Galeria */}
+                              {hasMultiple && (
+                                <>
+                                  <button 
+                                    onClick={(e) => { e.preventDefault(); handlePrevImage(produto.id, images.length - 1); }}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-malu-green-dark p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm"
+                                  >
+                                    <ChevronLeft size={20} />
+                                  </button>
+                                  <button 
+                                    onClick={(e) => { e.preventDefault(); handleNextImage(produto.id, images.length - 1); }}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-malu-green-dark p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm"
+                                  >
+                                    <ChevronRight size={20} />
+                                  </button>
+                                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                                    {images.map((_, idx) => (
+                                      <div 
+                                        key={idx} 
+                                        className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex ? 'bg-malu-green w-4' : 'bg-white/60'}`}
+                                      />
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </>
+                          );
+                      })()}
                       </div>
                     </div>
                     

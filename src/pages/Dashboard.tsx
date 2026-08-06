@@ -28,12 +28,45 @@ export default function Dashboard() {
   const [nomeProduto, setNomeProduto] = useState('');
   const [descProduto, setDescProduto] = useState('');
   const [precoProduto, setPrecoProduto] = useState('');
-  const [imgProduto, setImgProduto] = useState('');
+  const [imgProdutos, setImgProdutos] = useState<string[]>([]);
   const [catProduto, setCatProduto] = useState('garagem');
   
   const [novoEmail, setNovoEmail] = useState('');
   const [novaSenha, setNovaSenha] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleMultipleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    // VERIFICAÇÃO DO LIMITE DE 5 FOTOS
+    if (imgProdutos.length + files.length > 5) {
+      setMensagem({ tipo: 'erro', texto: 'Limite máximo de 5 fotos por produto.' });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    const urls: string[] = [];
+    try {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('image', file);
+        const response = await fetch('https://api.imgbb.com/1/upload?key=26d7dc95cc43c4d4dbea2a8100c967c2', { method: 'POST', body: formData });
+        const data = await response.json();
+        if (data.success) urls.push(data.data.url);
+      }
+      setImgProdutos(prev => [...prev, ...urls]);
+      setMensagem({ tipo: 'sucesso', texto: 'Fotos processadas e anexadas!' });
+    } catch {
+      setMensagem({ tipo: 'erro', texto: 'Falha no upload de algumas imagens.' });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const removerImagemProduto = (indexToRemove: number) => {
+    setImgProdutos(prev => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   // Estados para Gestão (Listagem)
   const [artigosCadastrados, setArtigosCadastrados] = useState<any[]>([]);
@@ -181,7 +214,7 @@ export default function Dashboard() {
 
   const limparFormularioProduto = () => {
     setEditandoProdutoId(null);
-    setNomeProduto(''); setDescProduto(''); setPrecoProduto(''); setImgProduto(''); setCatProduto('garagem');
+    setNomeProduto(''); setDescProduto(''); setPrecoProduto(''); setImgProdutos([]); setCatProduto('garagem');
   };
 
   const handleCriarOuEditarProduto = async (e: React.FormEvent) => {
@@ -202,7 +235,7 @@ export default function Dashboard() {
       const response = await fetch(url, {
         method: metodo, 
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-        body: JSON.stringify({ name: nomeProduto, description: descProduto, price: finalPrice, image_url: imgProduto, category: catProduto, status: 'disponivel' }),
+        body: JSON.stringify({ name: nomeProduto, description: descProduto, price: finalPrice, image_url: imgProdutos.join(','), category: catProduto, status: 'disponivel' }),
       });
       
       const text = await response.text();
@@ -269,7 +302,9 @@ export default function Dashboard() {
 
   const prepararEdicaoProduto = (prod: any) => {
     setEditandoProdutoId(prod.id);
-    setNomeProduto(prod.name); setDescProduto(prod.description); setPrecoProduto(prod.price.toString()); setImgProduto(prod.image_url); setCatProduto(prod.category);
+    setNomeProduto(prod.name); setDescProduto(prod.description); setPrecoProduto(prod.price.toString()); 
+    setImgProdutos(prod.image_url ? prod.image_url.split(',') : []); 
+    setCatProduto(prod.category);
     setVistaAtual('novo-produto');
   };
 
@@ -458,7 +493,7 @@ export default function Dashboard() {
                     produtosCadastrados.slice(0, 4).map(produto => (
                       <div key={produto.id} className="bg-white p-4 rounded-sm border border-malu-green-light/50 flex justify-between items-center group hover:border-malu-green transition-colors shadow-sm">
                         <div className="flex items-center gap-3">
-                          {produto.image_url && <img src={produto.image_url} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light/50" />}
+                          {produto.image_url && <img src={produto.image_url.split(',')[0]} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light/50" />}
                           <div className="flex flex-col">
                             <span className="font-serif text-malu-green-dark line-clamp-1">{produto.name}</span>
                             <span className="text-[10px] uppercase tracking-widest text-malu-text-muted mt-1">R$ {produto.price.toFixed(2)}</span>
@@ -557,7 +592,7 @@ export default function Dashboard() {
                             produtosCadastrados.filter(p => p.category === 'diversos').map((produto) => (
                               <tr key={produto.id} className="hover:bg-malu-bg/30 transition-colors">
                                 <td className="p-4 font-serif text-base text-malu-green-dark flex items-center gap-3">
-                                  {produto.image_url && <img src={produto.image_url} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light" />}
+                                  {produto.image_url && <img src={produto.image_url.split(',')[0]} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light" />}
                                   {produto.name}
                                 </td>
                                 <td className="p-4 font-bold text-malu-green">R$ {produto.price.toFixed(2)}</td>
@@ -603,7 +638,7 @@ export default function Dashboard() {
                             produtosCadastrados.filter(p => p.category === 'garagem').map((produto) => (
                               <tr key={produto.id} className="hover:bg-malu-bg/30 transition-colors">
                                 <td className="p-4 font-serif text-base text-malu-green-dark flex items-center gap-3">
-                                  {produto.image_url && <img src={produto.image_url} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light" />}
+                                  {produto.image_url && <img src={produto.image_url.split(',')[0]} alt="mini" className="w-10 h-10 object-cover rounded-sm border border-malu-green-light" />}
                                   {produto.name}
                                 </td>
                                 <td className="p-4 font-bold text-malu-green">R$ {produto.price.toFixed(2)}</td>
@@ -759,20 +794,33 @@ export default function Dashboard() {
                     <div>
                       <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Categoria de Destino</label>
                       <select value={catProduto} onChange={(e) => setCatProduto(e.target.value)} className="w-full px-4 py-3 bg-malu-bg border border-malu-green-light rounded-sm focus:ring-1 focus:ring-malu-green outline-none font-light uppercase tracking-wider text-xs">
-                        <option value="garagem">Desapego</option>
+                        <option value="garagem">Desapegos</option>
                         <option value="diversos">Bem-Estar & Nutrição</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Foto do Produto</label>
+                      <label className="block text-[10px] font-bold text-malu-text-muted uppercase tracking-widest mb-2">Fotos do Produto (Selecione 1 ou mais)</label>
                       <label className={`flex justify-center items-center gap-2 px-4 py-3 border border-dashed border-malu-green-light bg-malu-bg rounded-sm cursor-pointer hover:bg-white transition-colors ${isUploadingImage ? 'opacity-50 pointer-events-none' : ''}`}>
                           {isUploadingImage ? <Loader2 className="animate-spin text-malu-green" size={16} /> : <UploadCloud className="text-malu-green" size={16} />}
                           <span className="text-[10px] font-bold uppercase tracking-widest text-malu-green-dark">
-                            {isUploadingImage ? 'A enviar...' : 'Escolher foto'}
+                            {isUploadingImage ? 'A enviar...' : 'Escolher fotos'}
                           </span>
-                          <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, setImgProduto)} />
+                          <input type="file" accept="image/*" multiple className="hidden" onChange={handleMultipleImageUpload} />
                       </label>
-                      {imgProduto && <p className="text-[10px] font-bold uppercase tracking-widest text-malu-green mt-2 flex items-center gap-1"><CheckCircle size={12}/> {editandoProdutoId && !isUploadingImage ? 'Imagem Mantida' : 'Sucesso!'}</p>}
+                      
+                      {/* Mini Galeria */}
+                      {imgProdutos.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {imgProdutos.map((url, index) => (
+                            <div key={index} className="relative group w-12 h-12 rounded-sm border border-malu-green-light overflow-hidden">
+                              <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                              <button type="button" onClick={() => removerImagemProduto(index)} className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity" title="Remover">
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -799,8 +847,8 @@ export default function Dashboard() {
                     <div className="absolute top-4 right-4 z-10 bg-malu-card/95 backdrop-blur-sm px-3 py-1.5 rounded-sm font-sans text-sm font-bold text-malu-green-dark shadow-sm border border-malu-green-light">
                       R$ {precoProduto ? parseFloat(precoProduto.replace(',', '.')).toFixed(2) : '0.00'}
                     </div>
-                    {imgProduto ? (
-                      <img src={imgProduto} alt="Produto" className="w-full h-full object-cover" />
+                    {imgProdutos.length > 0 ? (
+                      <img src={imgProdutos[0]} alt="Produto" className="w-full h-full object-cover" />
                     ) : (
                       <ImageIcon size={48} className="text-malu-green-light" />
                     )}
